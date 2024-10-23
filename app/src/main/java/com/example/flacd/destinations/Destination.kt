@@ -9,6 +9,11 @@ sealed class Destination(val route: String) {
     object Home: Destination("home")
     object Search: Destination("search")
     object Profile: Destination("profile")
-    object AlbumDetail: Destination("albumDetail/{albumId}")
+    object AlbumDetail: Destination("albumDetail/{albumId}"){
         fun createRoute(albumId: Int?) = "albumDetail/$albumId"
+    }
+    object ProfileDetail: Destination("profileDetail/{userId}"){
+        fun createRoute(userId: Int?) = "profileDetail/$userId"
+    }
+
 }
