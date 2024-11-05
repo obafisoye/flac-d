@@ -92,7 +92,7 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
         NavHost(navController = navController as NavHostController, startDestination = Destination.Home.route){
 
             composable(Destination.Home.route){
-                HomeScreen(modifier = Modifier.padding(paddingValues), albumsManager)
+                HomeScreen(modifier = Modifier.padding(paddingValues), albumsManager, navController)
             }
 
             composable(Destination.Search.route){

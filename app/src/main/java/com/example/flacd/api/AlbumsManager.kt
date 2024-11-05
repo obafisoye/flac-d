@@ -35,7 +35,7 @@ class AlbumsManager {
                     Log.i("Data", "Data is loaded")
 
                     _albumsResponse.value = response.body()?.results?: emptyList()
-                    Log.i("DataResponse", _albumsResponse.value.toString())
+                    // Log.i("DataResponse", _albumsResponse.value.toString())
                 }
             }
 

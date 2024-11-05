@@ -1,10 +1,12 @@
 package com.example.flacd.view.Navigation
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.flacd.R
@@ -12,7 +14,10 @@ import com.example.flacd.destinations.Destination
 
 @Composable
 fun BottomNav(navController: NavHostController) {
-    NavigationBar {
+    NavigationBar(
+        modifier = androidx.compose.ui.Modifier.height(75.dp),
+        containerColor = androidx.compose.ui.graphics.Color.Black,
+    ) {
         val navBackStackEntry = navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry.value?.destination
 
