@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "88181205968",
+    "project_id": "flacd-95fb7",
+    "storage_bucket": "flacd-95fb7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:88181205968:android:0507b6ab151f80f0f967d5",
+        "android_client_info": {
+          "package_name": "com.example.flacd"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1NvOjfkQX3SWGAQfc0taEC3ejlttf9eU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

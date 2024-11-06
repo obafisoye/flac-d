@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
+// Screen for displaying and searching for content
 @Composable
 fun SearchScreen(modifier: Modifier = Modifier){
     Box(

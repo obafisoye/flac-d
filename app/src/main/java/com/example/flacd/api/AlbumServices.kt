@@ -5,7 +5,10 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+
 interface AlbumServices{
+
+    // Retrieves a list of the most wanted albums based on a specific type, sorted by user demand.
     @GET("search")
     fun getMostWantedAlbums(
         @Query("token") token: String,

@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
+// Screen for displaying profile details
 @Composable
 fun ProfileDetailScreen(modifier: Modifier = Modifier){
     Box(

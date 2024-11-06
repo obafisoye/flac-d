@@ -4,11 +4,11 @@ package com.example.flacd.api.model
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
+// Represents an album's information as received from the Discogs  API
 @JsonClass(generateAdapter = true)
 data class Album(
 //    @Json(name = "barcode")
 //    val barcode: List<String>,
-
     @Json(name = "id")
     val id: Int,
     @Json(name = "country")

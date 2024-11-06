@@ -12,6 +12,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.flacd.R
 import com.example.flacd.destinations.Destination
 
+// Bottom navigation bar composable
 @Composable
 fun BottomNav(navController: NavHostController) {
     NavigationBar(
@@ -25,6 +26,7 @@ fun BottomNav(navController: NavHostController) {
         val ic_search = painterResource(id = R.drawable.ic_search)
         val ic_profile = painterResource(id = R.drawable.ic_profile)
 
+        // Home Navigation Item
         NavigationBarItem(
             selected = currentDestination?.route == "home",
             onClick = { navController.navigate(Destination.Home.route){
@@ -34,6 +36,7 @@ fun BottomNav(navController: NavHostController) {
             icon = { Icon(painter = ic_home, contentDescription = "Home Screen Button") }
         )
 
+        // Search Navigation Item
         NavigationBarItem(
             selected = currentDestination?.route == "search",
             onClick = { navController.navigate(Destination.Search.route){
@@ -43,6 +46,7 @@ fun BottomNav(navController: NavHostController) {
             icon = { Icon(painter = ic_search, contentDescription = "Search Screen Button") }
         )
 
+        // Profile Navigation Item
         NavigationBarItem(
             selected = currentDestination?.route == "profile",
             onClick = { navController.navigate(Destination.Profile.route){

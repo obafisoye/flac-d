@@ -34,6 +34,11 @@ import com.example.flacd.screens.ProfileScreen
 import com.example.flacd.screens.SearchScreen
 import com.example.flacd.ui.theme.FLACdTheme
 import com.example.flacd.view.Navigation.BottomNav
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,19 +50,23 @@ class MainActivity : ComponentActivity() {
 
                     val navController = rememberNavController()
 
-                    // fetch albums
-                    val albumsManager = AlbumsManager()
+                    // firebase
+                    val db = Firebase.firestore
 
-                    App(navController = navController, modifier = Modifier.padding(innerPadding), albumsManager)
+                    // fetch albums
+                    val albumsManager = AlbumsManager(db)
+
+                    App(navController = navController, modifier = Modifier.padding(innerPadding), albumsManager, db)
                 }
             }
         }
     }
 }
 
+// Main app composable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App(navController: NavHostController, modifier: Modifier, albumsManager: AlbumsManager) {
+fun App(navController: NavHostController, modifier: Modifier, albumsManager: AlbumsManager, db: FirebaseFirestore) {
 
     val interFont = FontFamily(
         Font(R.font.inter_variable)
@@ -89,24 +98,30 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
         paddingValues.calculateBottomPadding()
         Spacer(modifier = Modifier.padding(10.dp))
 
+        // Navigation Host
         NavHost(navController = navController as NavHostController, startDestination = Destination.Home.route){
 
+            // Home Navigation Route
             composable(Destination.Home.route){
                 HomeScreen(modifier = Modifier.padding(paddingValues), albumsManager, navController)
             }
 
+            // Search Navigation Route
             composable(Destination.Search.route){
                 SearchScreen(modifier = Modifier.padding(paddingValues))
             }
 
+            // Profile Navigation Route
             composable(Destination.Profile.route){
                 ProfileScreen(modifier = Modifier.padding(paddingValues))
             }
 
+            // Album Detail Navigation Route
             composable(Destination.AlbumDetail.route){
                 AlbumDetailScreen(modifier = Modifier.padding(paddingValues))
             }
 
+            // Profile Detail Navigation Route
             composable(Destination.ProfileDetail.route){
                 ProfileDetailScreen(modifier = Modifier.padding(paddingValues))
             }
