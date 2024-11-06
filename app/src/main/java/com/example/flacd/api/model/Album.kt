@@ -10,25 +10,25 @@ data class Album(
 //    @Json(name = "barcode")
 //    val barcode: List<String>,
     @Json(name = "id")
-    val id: Int,
+    val id: Int?=null,
     @Json(name = "country")
-    val country: String,
+    val country: String?=null,
     @Json(name = "cover_image")
-    val coverImage: String,
+    val coverImage: String?=null,
     @Json(name = "format")
-    val format: List<String>,
+    val format: List<String>?=null,
     @Json(name = "genre")
-    val genre: List<String>,
+    val genre: List<String>?=null,
     @Json(name = "label")
-    val label: List<String>,
+    val label: List<String>?=null,
     @Json(name = "style")
-    val style: List<String>,
+    val style: List<String>?=null,
     @Json(name = "thumb")
-    val thumb: String,
+    val thumb: String?=null,
     @Json(name = "title")
-    val title: String,
+    val title: String?=null,
     @Json(name = "type")
-    val type: String,
+    val type: String?=null,
     @Json(name = "year")
-    val year: String
+    val year: String?=null
 )

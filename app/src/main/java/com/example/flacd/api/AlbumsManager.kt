@@ -7,13 +7,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.example.flacd.api.model.Album
 import com.example.flacd.api.model.AlbumData
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 
-class AlbumsManager(db: FirebaseFirestore) {
+class AlbumsManager(private val db: FirebaseFirestore) {
     private var _albumsResponse = mutableStateOf<List<Album>>(emptyList())
     private val token = "yKOQpAcVvaYUwqOcJyUYlMVIpdlTjEJIbEQKzrEu"
 
@@ -29,6 +37,7 @@ class AlbumsManager(db: FirebaseFirestore) {
     }
 
     // fetches a list of most wanted albums from the Discogs API and updates the albumsResponse state
+    // updated to update database with unique albums and then fetch albums from database
     private fun getAlbums(){
         val service = Api.retrofitService.getMostWantedAlbums(token)
 
@@ -39,9 +48,13 @@ class AlbumsManager(db: FirebaseFirestore) {
             ){
                 if(response.isSuccessful){
                     Log.i("Data", "Data is loaded")
+                    val albumList = response.body()?.results?: emptyList()
+
+                    // Store in firebase firestore
+                    saveAlbumsToFirebase(albumList, db = db)
 
                     // Updates the albumsResponse state with the fetched data
-                    _albumsResponse.value = response.body()?.results?: emptyList()
+                    getAlbumsFromFirestore(db = db)
                 }
             }
 
@@ -50,5 +63,67 @@ class AlbumsManager(db: FirebaseFirestore) {
                 Log.d("DataError", "${t.message}")
             }
         })
+    }
+
+    // iterates through the album list and saves each album to a firestore collection named "albums"
+    private fun saveAlbumsToFirebase(albumList: List<Album>, db: FirebaseFirestore){
+        val collection: CollectionReference = db.collection("albums")
+
+        for(album in albumList){
+            // check if album already exists in database
+            collection.whereEqualTo("title", album.title).get()
+                .addOnSuccessListener { documents ->
+                    // if it does not proceed with save
+                    if (documents.isEmpty) {
+                        val albumData = hashMapOf(
+                            "id" to album.id,
+                            "country" to album.country,
+                            "coverImage" to album.coverImage,
+                            "format" to album.format,
+                            "genre" to album.genre,
+                            "label" to album.label,
+                            "style" to album.style,
+                            "thumb" to album.thumb,
+                            "title" to album.title,
+                            "type" to album.type,
+                            "year" to album.year
+                        )
+
+                        // add album to firestore
+                        CoroutineScope(Dispatchers.IO).launch {
+                            try {
+                                collection.add(albumData).await()
+                                Log.i("Firestore", "Album ${album.title} added successfully")
+                            }
+                            catch (e: Exception) {
+                                Log.e("FirestoreError", "Error adding album ${album.title}: ${e.message}")
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
+    // function to get albums from firestore
+    fun getAlbumsFromFirestore(db: FirebaseFirestore){
+        CoroutineScope(Dispatchers.IO).launch {
+            val collection: CollectionReference = db.collection("albums")
+
+            collection.get()
+                .addOnSuccessListener { documents ->
+                    val albumList = mutableListOf<Album>()
+                    for(document in documents){
+                        val album = document.toObject(Album::class.java)
+                        albumList.add(album)
+                    }
+
+                    albumList.shuffle()
+                    _albumsResponse.value = albumList
+                    Log.i("Firestore", "Albums fetched successfully")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("FirestoreError", "Error getting albums: ${e.message}")
+                }
+        }
     }
 }
