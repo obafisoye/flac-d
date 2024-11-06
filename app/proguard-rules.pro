@@ -19,3 +19,10 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep Moshi generated adapter
+-keep class com.squareup.moshi.JsonAdapter$** { *; }
+-keep class com.squareup.moshi.Moshi { *; }
+
+# Keep your Album class and other data classes
+-keep class com.example.flacd.api.model.Album { *; }
