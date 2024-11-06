@@ -126,4 +126,23 @@ class AlbumsManager(private val db: FirebaseFirestore) {
                 }
         }
     }
+
+    // function to get a single album from firestore
+    suspend fun getAlbumById(db: FirebaseFirestore, movieId: String): Album?{
+        return try{
+            // query firestore with specific movie id
+            val documentSnapshot = db.collection("albums").whereEqualTo("id", movieId.toInt()).get().await()
+
+            if(!documentSnapshot.isEmpty){
+                documentSnapshot.documents[0].toObject(Album::class.java)
+            }
+            else {
+                null
+            }
+        }
+        catch (e: Exception){
+            Log.e("FirestoreError", "Error getting album: ${e.message}")
+            null
+        }
+    }
 }
