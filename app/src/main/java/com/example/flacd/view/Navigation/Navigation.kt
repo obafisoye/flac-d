@@ -5,6 +5,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -17,7 +18,7 @@ import com.example.flacd.destinations.Destination
 fun BottomNav(navController: NavHostController) {
     NavigationBar(
         modifier = androidx.compose.ui.Modifier.height(75.dp),
-        containerColor = androidx.compose.ui.graphics.Color.Black,
+        containerColor = androidx.compose.ui.graphics.Color.DarkGray,
     ) {
         val navBackStackEntry = navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry.value?.destination
@@ -33,7 +34,7 @@ fun BottomNav(navController: NavHostController) {
                 popUpTo(Destination.Home.route)
                     launchSingleTop = true
             } },
-            icon = { Icon(painter = ic_home, contentDescription = "Home Screen Button") }
+            icon = { Icon(painter = ic_home, contentDescription = "Home Screen Button", tint = Color.Black) }
         )
 
         // Search Navigation Item
@@ -43,7 +44,7 @@ fun BottomNav(navController: NavHostController) {
                 popUpTo(Destination.Search.route)
                     launchSingleTop = true
             } },
-            icon = { Icon(painter = ic_search, contentDescription = "Search Screen Button") }
+            icon = { Icon(painter = ic_search, contentDescription = "Search Screen Button", tint = Color.Black) }
         )
 
         // Profile Navigation Item
@@ -53,7 +54,7 @@ fun BottomNav(navController: NavHostController) {
                 popUpTo(Destination.Profile.route)
                     launchSingleTop = true
             } },
-            icon = { Icon(painter = ic_profile, contentDescription = "Profile Screen Button") }
+            icon = { Icon(painter = ic_profile, contentDescription = "Profile Screen Button", tint = Color.Black) }
         )
 
     }

@@ -5,12 +5,17 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -26,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -75,17 +81,19 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun App(navController: NavHostController, modifier: Modifier, albumsManager: AlbumsManager, db: FirebaseFirestore) {
 
+    // album variable to store album gotten from database
     var album by remember {
         mutableStateOf<Album?>(null)
     }
 
-    val interFont = FontFamily(
-        Font(R.font.inter_variable)
+    val dotoFont = FontFamily(
+        Font(R.font.doto_variable)
     )
 
     Scaffold(
         topBar = {
             TopAppBar(
+                modifier = Modifier.height(85.dp),
                 title = {
                     Box(
                         modifier = Modifier.fillMaxWidth(),
@@ -94,12 +102,14 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
                         Text(
                             text = "FLACd",
                             color = Color.White,
-                            fontFamily = interFont
+                            fontFamily = dotoFont,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.headlineSmall,
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black,
+                    containerColor = Color.DarkGray,
                 )
             )
         },

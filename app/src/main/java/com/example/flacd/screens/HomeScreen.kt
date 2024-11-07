@@ -41,7 +41,7 @@ fun HomeScreen(modifier: Modifier = Modifier, albumsManager: AlbumsManager, navC
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.DarkGray)
+            .background(Color.Black)
     ){
         //Text(text = "Home Screen", color = Color.White, fontFamily = interFont)
 
