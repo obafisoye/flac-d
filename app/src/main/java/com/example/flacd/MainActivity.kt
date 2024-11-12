@@ -1,5 +1,6 @@
 package com.example.flacd
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -65,6 +66,9 @@ class MainActivity : ComponentActivity() {
 
                     val navController = rememberNavController()
 
+                    // app context
+                    val context: Context = applicationContext
+
                     // view model
                     val viewModel: AlbumViewModel = ViewModelProvider(this).get(AlbumViewModel::class.java)
 
@@ -74,7 +78,7 @@ class MainActivity : ComponentActivity() {
                     // fetch albums
                     val albumsManager = AlbumsManager(db)
 
-                    App(navController = navController, modifier = Modifier.padding(innerPadding), albumsManager, db, viewModel)
+                    App(navController = navController, modifier = Modifier.padding(innerPadding), albumsManager, db, viewModel, context)
                 }
             }
         }
@@ -84,7 +88,7 @@ class MainActivity : ComponentActivity() {
 // Main app composable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App(navController: NavHostController, modifier: Modifier, albumsManager: AlbumsManager, db: FirebaseFirestore, viewModel: AlbumViewModel) {
+fun App(navController: NavHostController, modifier: Modifier, albumsManager: AlbumsManager, db: FirebaseFirestore, viewModel: AlbumViewModel, context: Context) {
 
     // album variable to store album gotten from database
     var album by remember {
@@ -139,7 +143,7 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
 
             // Profile Navigation Route
             composable(Destination.Profile.route){
-                ProfileScreen(modifier = Modifier.padding(paddingValues))
+                ProfileScreen(modifier = Modifier.padding(paddingValues), context)
             }
 
             // Album Detail Navigation Route
