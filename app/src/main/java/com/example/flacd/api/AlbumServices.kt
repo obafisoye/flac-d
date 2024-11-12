@@ -12,9 +12,19 @@ interface AlbumServices{
     @GET("search")
     fun getMostWantedAlbums(
         @Query("token") token: String,
-        @Query("type") type: String = "release",
+        @Query("type") type: String = "master",
         @Query("sort") sort: String = "want",
         @Query("order") order: String = "desc",
         @Query("per_page") perPage: Int = 50
     ): Call<AlbumData>
+
+    // Retrieves a list of albums that match with the query
+    @GET("search")
+    fun searchAlbumByQuery(
+        @Query("q") q: String,
+        @Query("token") token: String,
+        @Query("type") type: String = "master",
+        @Query("format") format: String = "album",
+        @Query("per_page") perPage: Int = 10,
+    ): Call <AlbumData>
 }

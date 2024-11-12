@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -47,6 +48,7 @@ import com.example.flacd.screens.ProfileScreen
 import com.example.flacd.screens.SearchScreen
 import com.example.flacd.ui.theme.FLACdTheme
 import com.example.flacd.view.Navigation.BottomNav
+import com.example.flacd.viewmodel.AlbumViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
@@ -63,13 +65,16 @@ class MainActivity : ComponentActivity() {
 
                     val navController = rememberNavController()
 
+                    // view model
+                    val viewModel: AlbumViewModel = ViewModelProvider(this).get(AlbumViewModel::class.java)
+
                     // firebase
                     val db = Firebase.firestore
 
                     // fetch albums
                     val albumsManager = AlbumsManager(db)
 
-                    App(navController = navController, modifier = Modifier.padding(innerPadding), albumsManager, db)
+                    App(navController = navController, modifier = Modifier.padding(innerPadding), albumsManager, db, viewModel)
                 }
             }
         }
@@ -79,7 +84,7 @@ class MainActivity : ComponentActivity() {
 // Main app composable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App(navController: NavHostController, modifier: Modifier, albumsManager: AlbumsManager, db: FirebaseFirestore) {
+fun App(navController: NavHostController, modifier: Modifier, albumsManager: AlbumsManager, db: FirebaseFirestore, viewModel: AlbumViewModel) {
 
     // album variable to store album gotten from database
     var album by remember {
@@ -129,7 +134,7 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
 
             // Search Navigation Route
             composable(Destination.Search.route){
-                SearchScreen(modifier = Modifier.padding(paddingValues))
+                SearchScreen(modifier = Modifier.padding(paddingValues), viewModel = viewModel, db = db, navController)
             }
 
             // Profile Navigation Route
