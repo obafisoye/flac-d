@@ -2,6 +2,7 @@ package com.example.flacd.screens
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,24 +15,27 @@ import androidx.compose.ui.graphics.Color
 // Screen for displaying profile content
 @Composable
 fun ProfileScreen(modifier: Modifier = Modifier, context: Context){
+    val sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+    val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
+
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(Color.DarkGray)
     ){
-        Text(text = "Profile Screen", color = Color.White)
+        if(isLoggedIn){
+            Button(
+                onClick = {
+                    sharedPref.edit()
+                        .putBoolean("isLoggedIn", false)
+                        .apply()
 
-        Button(
-            onClick = {
-                val sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-                sharedPref.edit()
-                    .putBoolean("isLoggedIn", false)
-                    .apply()
+                    Toast.makeText(context, "Logged Out", Toast.LENGTH_SHORT).show()
 
-                Log.d("sharedpref", "${sharedPref.getString("email", "")}, ${sharedPref.getString("password", "")}, ${sharedPref.getBoolean("isLoggedIn", false)}")
+                }
+            ) {
+                Text(text = "Log Out")
             }
-        ) {
-            Text(text = "Log Out")
         }
     }
 }

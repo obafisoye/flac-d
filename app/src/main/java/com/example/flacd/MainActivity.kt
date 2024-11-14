@@ -47,6 +47,7 @@ import com.example.flacd.screens.HomeScreen
 import com.example.flacd.screens.ProfileDetailScreen
 import com.example.flacd.screens.ProfileScreen
 import com.example.flacd.screens.SearchScreen
+import com.example.flacd.screens.SplashScreen
 import com.example.flacd.ui.theme.FLACdTheme
 import com.example.flacd.view.Navigation.BottomNav
 import com.example.flacd.viewmodel.AlbumViewModel

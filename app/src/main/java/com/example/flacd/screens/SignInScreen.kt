@@ -8,11 +8,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -28,6 +30,7 @@ import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.flacd.MainActivity
+import com.example.flacd.RegisterActivity
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -72,6 +75,10 @@ fun SignInScreen(context: Context, modifier: Modifier = Modifier) {
 
             Button(
                 onClick = { performSignIn(email, password, context, keyboardController) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Gray,
+                    contentColor = Color.White
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
@@ -79,14 +86,29 @@ fun SignInScreen(context: Context, modifier: Modifier = Modifier) {
                 Text("Sign In")
             }
 
-            Button(
-                onClick = { },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                Text("Register")
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Text(text = "New user?", color = Color.White)
+
+                Button(
+                    onClick = {
+                        // if register is clicked direct to register screen
+                        val intent = Intent(context, RegisterActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        context.startActivity(intent)
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Gray,
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier
+                        .padding(8.dp)
+                ) {
+                    Text("Register")
+                }
             }
+
         }
     }
 }

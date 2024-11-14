@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +40,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.flacd.R
 import com.example.flacd.api.model.Album
+import com.google.android.play.integrity.internal.r
 
 // Screen for displaying album details
 @Composable
@@ -100,6 +103,9 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album){
                 labels?.forEach {
                     Button(
                         onClick = {},
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.teal_700),
+                        ),
                         modifier = Modifier
                             .padding(horizontal = 5.dp)
                             .size(width = 90.dp, height = 30.dp),
@@ -125,6 +131,9 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album){
                 album.genre?.forEach {
                     Button(
                         onClick = {},
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.teal_700),
+                        ),
                         modifier = Modifier
                             .padding(horizontal = 5.dp)
                             .size(width = 80.dp, height = 30.dp),
@@ -150,6 +159,9 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album){
                 album.style?.forEach {
                     Button(
                         onClick = {},
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.teal_700),
+                        ),
                         modifier = Modifier
                             .padding(horizontal = 5.dp)
                             .size(width = 80.dp, height = 30.dp),
@@ -175,6 +187,9 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album){
                 album.format?.forEach {
                     Button(
                         onClick = {},
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.teal_700),
+                        ),
                         modifier = Modifier
                             .padding(horizontal = 5.dp)
                             .size(width = 60.dp, height = 30.dp),
