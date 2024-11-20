@@ -2,6 +2,8 @@ package com.example.flacd.screens
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,10 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.flacd.MainActivity
 import com.example.flacd.RegisterActivity
 import com.example.flacd.SignInActivity
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun RegisterScreen(context: Context, modifier: Modifier = Modifier){
@@ -83,7 +88,7 @@ fun RegisterScreen(context: Context, modifier: Modifier = Modifier){
 
             Button(
                 onClick = {
-
+                    registerUser(email, password, context, keyboardController)
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Gray,
@@ -122,3 +127,35 @@ fun RegisterScreen(context: Context, modifier: Modifier = Modifier){
         }
     }
 }
+
+fun registerUser(email: String, password: String, context: Context, keyboardController: SoftwareKeyboardController?) {
+
+    val auth = FirebaseAuth.getInstance()
+
+    auth.createUserWithEmailAndPassword(email, password)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                // save email and password to shared preferences
+                val sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+                sharedPref.edit()
+                    .putString("email", email)
+                    .putString("password", password)
+                    .putBoolean("isLoggedIn", true)
+                    .apply()
+
+                Log.d("sharedpref", "${sharedPref.getString("email", "")}, ${sharedPref.getString("password", "")}, ${sharedPref.getBoolean("isLoggedIn", false)}")
+
+                Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()
+
+                var intent = Intent(context, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.putExtra("userId", auth.currentUser?.uid)
+                context.startActivity(intent)
+
+            } else {
+                Toast.makeText(context, "Registration Failed", Toast.LENGTH_SHORT).show()
+            }
+        }
+}
+
+
