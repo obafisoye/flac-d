@@ -120,6 +120,7 @@ fun performSignIn(email: String, password: String, context: Context, keyboardCon
     auth.signInWithEmailAndPassword(email, password)
         .addOnCompleteListener{ task ->
             if (task.isSuccessful) {
+                keyboardController?.hide()
 
                 // save email and password to shared preferences
                 val sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
@@ -138,6 +139,7 @@ fun performSignIn(email: String, password: String, context: Context, keyboardCon
                 intent.putExtra("userId", auth.currentUser?.uid)
                 context.startActivity(intent)
             } else {
+                keyboardController?.hide()
                 Toast.makeText(context, "Sign In Failed", Toast.LENGTH_SHORT).show()
             }
             keyboardController?.hide()

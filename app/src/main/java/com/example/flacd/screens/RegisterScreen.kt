@@ -33,6 +33,7 @@ import com.example.flacd.MainActivity
 import com.example.flacd.RegisterActivity
 import com.example.flacd.SignInActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun RegisterScreen(context: Context, modifier: Modifier = Modifier){
@@ -41,6 +42,9 @@ fun RegisterScreen(context: Context, modifier: Modifier = Modifier){
     var email by remember { mutableStateOf("")}
     var password by remember { mutableStateOf("")}
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    val auth = FirebaseAuth.getInstance()
+    val firestore = FirebaseFirestore.getInstance()
 
 
     Box(
@@ -88,7 +92,7 @@ fun RegisterScreen(context: Context, modifier: Modifier = Modifier){
 
             Button(
                 onClick = {
-                    registerUser(email, password, context, keyboardController)
+                    registerUser(username, email, password, context, keyboardController, auth, firestore)
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Gray,
@@ -128,13 +132,11 @@ fun RegisterScreen(context: Context, modifier: Modifier = Modifier){
     }
 }
 
-fun registerUser(email: String, password: String, context: Context, keyboardController: SoftwareKeyboardController?) {
-
-    val auth = FirebaseAuth.getInstance()
-
+fun registerUser(username: String,email: String, password: String, context: Context, keyboardController: SoftwareKeyboardController?, auth: FirebaseAuth, firestore: FirebaseFirestore) {
     auth.createUserWithEmailAndPassword(email, password)
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
+                keyboardController?.hide()
                 // save email and password to shared preferences
                 val sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
                 sharedPref.edit()
@@ -143,6 +145,11 @@ fun registerUser(email: String, password: String, context: Context, keyboardCont
                     .putBoolean("isLoggedIn", true)
                     .apply()
 
+                val user = auth.currentUser
+                user?.let{
+                    val userId = it.uid
+                    saveUser(username, userId, firestore)
+                }
                 Log.d("sharedpref", "${sharedPref.getString("email", "")}, ${sharedPref.getString("password", "")}, ${sharedPref.getBoolean("isLoggedIn", false)}")
 
                 Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()
@@ -153,8 +160,26 @@ fun registerUser(email: String, password: String, context: Context, keyboardCont
                 context.startActivity(intent)
 
             } else {
+                keyboardController?.hide()
                 Toast.makeText(context, "Registration Failed", Toast.LENGTH_SHORT).show()
             }
+        }
+}
+
+fun saveUser(username: String, userId: String, firestore: FirebaseFirestore){
+
+    val user = hashMapOf(
+        "username" to username
+    )
+
+    firestore.collection("users")
+        .document(userId)
+        .set(user)
+        .addOnSuccessListener {
+            Log.d("firestore", "User saved successfully")
+        }
+        .addOnFailureListener{
+            Log.d("firestore", "Error saving user")
         }
 }
 
