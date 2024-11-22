@@ -1,8 +1,11 @@
 package com.example.flacd.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,8 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -21,21 +22,16 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -44,10 +40,10 @@ import coil.request.ImageRequest
 import com.example.flacd.R
 import com.example.flacd.api.model.Album
 import com.example.flacd.viewmodel.AlbumViewModel
-import com.google.android.play.integrity.internal.r
 import com.google.firebase.firestore.FirebaseFirestore
 
 // Screen for displaying album details
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album, viewModel: AlbumViewModel, db: FirebaseFirestore, navController: NavController){
 
@@ -106,10 +102,13 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album, viewModel: Al
 
             // album labels
             Text(text = "Labels: ", color = Color.White, fontFamily = interFont, style = MaterialTheme.typography.bodyMedium)
-            Row {
-                val labels = album.label?.take(3)
+            FlowRow(
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ){
+                val labels = album.label?.take(4)
 
                 labels?.forEach {
+                    val buttonWidth = (it.length * 10).dp
                     Button(
                         onClick = {},
                         enabled = false,
@@ -118,7 +117,7 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album, viewModel: Al
                         ),
                         modifier = Modifier
                             .padding(horizontal = 5.dp)
-                            .size(width = 90.dp, height = 30.dp),
+                            .size(width = buttonWidth.coerceIn(55.dp, 150.dp), height = 30.dp),
                         contentPadding = PaddingValues(7.dp),
                     ){
                         Text(
@@ -137,8 +136,11 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album, viewModel: Al
 
             // albums genres
             Text(text = "Genres: ", color = Color.White, fontFamily = interFont, style = MaterialTheme.typography.bodyMedium)
-            Row {
+            FlowRow(
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
                 album.genre?.forEach {
+                    val buttonWidth = (it.length * 10).dp
                     Button(
                         onClick = {},
                         enabled = false,
@@ -147,7 +149,7 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album, viewModel: Al
                         ),
                         modifier = Modifier
                             .padding(horizontal = 5.dp)
-                            .size(width = 80.dp, height = 30.dp),
+                            .size(width = buttonWidth.coerceIn(55.dp, 150.dp), height = 30.dp),
                         contentPadding = PaddingValues(7.dp),
                     ){
                         Text(
@@ -166,8 +168,11 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album, viewModel: Al
 
             // album styles
             Text(text = "Styles: ", color = Color.White, fontFamily = interFont, style = MaterialTheme.typography.bodyMedium)
-            Row {
+            FlowRow(
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
                 album.style?.forEach {
+                    val buttonWidth = (it.length * 10).dp
                     Button(
                         onClick = {
                             viewModel.getAlbumsByStyle(style = it, db = db)
@@ -178,7 +183,7 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album, viewModel: Al
                         ),
                         modifier = Modifier
                             .padding(horizontal = 5.dp)
-                            .size(width = 80.dp, height = 30.dp),
+                            .size(width = buttonWidth.coerceIn(55.dp, 150.dp), height = 30.dp),
                         contentPadding = PaddingValues(7.dp),
                     ){
                         Text(
@@ -197,8 +202,11 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album, viewModel: Al
 
             // album formats
             Text(text = "Formats: ", color = Color.White, fontFamily = interFont, style = MaterialTheme.typography.bodyMedium)
-            Row {
+            FlowRow(
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
                 album.format?.forEach {
+                    val buttonWidth = (it.length * 10).dp
                     Button(
                         onClick = {},
                         enabled = false,
@@ -207,7 +215,7 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album, viewModel: Al
                         ),
                         modifier = Modifier
                             .padding(horizontal = 5.dp)
-                            .size(width = 60.dp, height = 30.dp),
+                            .size(width = buttonWidth.coerceIn(55.dp, 150.dp), height = 30.dp),
                         contentPadding = PaddingValues(7.dp),
                     ){
                         Text(
