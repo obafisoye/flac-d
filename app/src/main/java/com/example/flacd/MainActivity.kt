@@ -46,6 +46,7 @@ import com.example.flacd.screens.AlbumDetailScreen
 import com.example.flacd.screens.HomeScreen
 import com.example.flacd.screens.ProfileDetailScreen
 import com.example.flacd.screens.ProfileScreen
+import com.example.flacd.screens.RelatedAlbumsScreen
 import com.example.flacd.screens.SearchScreen
 import com.example.flacd.screens.SplashScreen
 import com.example.flacd.ui.theme.FLACdTheme
@@ -157,12 +158,19 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
                     }
                 }
 
-                album?.let { AlbumDetailScreen(album = it, modifier = Modifier.padding(paddingValues)) }
+                album?.let { AlbumDetailScreen(album = it, modifier = Modifier.padding(paddingValues), viewModel = viewModel, db = db, navController = navController) }
             }
 
             // Profile Detail Navigation Route
             composable(Destination.ProfileDetail.route){
                 ProfileDetailScreen(modifier = Modifier.padding(paddingValues))
+            }
+
+            // Related Albums Screen
+            composable(Destination.RelatedAlbums.route){ navBackStackEntry ->
+                val style: String? = navBackStackEntry.arguments?.getString("style")
+
+                style?.let { RelatedAlbumsScreen(style = it, modifier = Modifier.padding(paddingValues), viewModel = viewModel, navController = navController) }
             }
         }
     }

@@ -35,7 +35,7 @@ class AlbumsManager(private val db: FirebaseFirestore) {
     }
 
     // fetches a list of most wanted albums from the Discogs API and updates the albumsResponse state
-    // updated to update database with unique albums and then fetch albums from database
+    // changed to update database with unique albums and then fetch albums from database
     private fun getAlbums() {
         val service = Api.retrofitService.getMostWantedAlbums(token)
 
@@ -124,11 +124,11 @@ class AlbumsManager(private val db: FirebaseFirestore) {
     }
 
     // function to get a single album from firestore
-    suspend fun getAlbumById(db: FirebaseFirestore, movieId: String): Album? {
+    suspend fun getAlbumById(db: FirebaseFirestore, albumId: String): Album? {
         return try {
             // query firestore with specific movie id
             val documentSnapshot =
-                db.collection("albums").whereEqualTo("id", movieId.toInt()).get().await()
+                db.collection("albums").whereEqualTo("id", albumId.toInt()).get().await()
 
             if (!documentSnapshot.isEmpty) {
                 documentSnapshot.documents[0].toObject(Album::class.java)

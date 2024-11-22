@@ -15,6 +15,7 @@ import retrofit2.Response
 class AlbumViewModel: ViewModel(){
     private val token = "yKOQpAcVvaYUwqOcJyUYlMVIpdlTjEJIbEQKzrEu"
     val albums = mutableStateOf<List<Album>>(emptyList())
+    val styleAlbums = mutableStateOf<List<Album>>(emptyList())
 
     var searchTerm = mutableStateOf("")
 
@@ -52,5 +53,33 @@ class AlbumViewModel: ViewModel(){
     // saves search query for use on search screen
     fun saveSearchTerm(term: String){
         searchTerm.value = term
+    }
+
+    // returns a list of albums by style
+    fun getAlbumsByStyle(style:String, db: FirebaseFirestore){
+
+        if(style.isNotBlank()){
+
+            val service = Api.retrofitService.getAlbumsByStyle(style = style, token = token)
+            service.enqueue(object: Callback<AlbumData>{
+                override fun onResponse(call: Call<AlbumData>, response: Response<AlbumData>) {
+                    if(response.isSuccessful){
+                        styleAlbums.value = response.body()?.results?: emptyList()
+//                        Log.d("Search by style", "${styleAlbums.value}")
+
+                        val albumsManager = AlbumsManager(db)
+                        albumsManager.saveAlbumsToFirebase(styleAlbums.value, db)
+                    }
+                }
+
+                override fun onFailure(call: Call<AlbumData>, t: Throwable) {
+                    Log.e("SearchError", "${t.message}")
+                }
+
+            })
+        }
+        else{
+            styleAlbums.value = emptyList()
+        }
     }
 }

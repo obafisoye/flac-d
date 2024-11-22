@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -36,15 +38,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.flacd.R
 import com.example.flacd.api.model.Album
+import com.example.flacd.viewmodel.AlbumViewModel
 import com.google.android.play.integrity.internal.r
+import com.google.firebase.firestore.FirebaseFirestore
 
 // Screen for displaying album details
 @Composable
-fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album){
+fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album, viewModel: AlbumViewModel, db: FirebaseFirestore, navController: NavController){
+
+    val scrollState = rememberScrollState()
 
     val interFont = FontFamily(
         Font(R.font.inter_variable)
@@ -56,7 +63,9 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album){
             .background(Color.Black)
     ){
         Column(
-            modifier = Modifier.padding(10.dp)
+            modifier = Modifier
+                .padding(10.dp)
+                .verticalScroll(scrollState)
         ) {
 
             // album title
@@ -103,8 +112,9 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album){
                 labels?.forEach {
                     Button(
                         onClick = {},
+                        enabled = false,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.teal_700),
+                            disabledContainerColor = Color.DarkGray,
                         ),
                         modifier = Modifier
                             .padding(horizontal = 5.dp)
@@ -131,8 +141,9 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album){
                 album.genre?.forEach {
                     Button(
                         onClick = {},
+                        enabled = false,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.teal_700),
+                            disabledContainerColor = Color.DarkGray,
                         ),
                         modifier = Modifier
                             .padding(horizontal = 5.dp)
@@ -158,7 +169,10 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album){
             Row {
                 album.style?.forEach {
                     Button(
-                        onClick = {},
+                        onClick = {
+                            viewModel.getAlbumsByStyle(style = it, db = db)
+                            navController.navigate("relatedAlbums/${it}")
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colorResource(id = R.color.teal_700),
                         ),
@@ -187,8 +201,9 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album){
                 album.format?.forEach {
                     Button(
                         onClick = {},
+                        enabled = false,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.teal_700),
+                            disabledContainerColor = Color.DarkGray,
                         ),
                         modifier = Modifier
                             .padding(horizontal = 5.dp)

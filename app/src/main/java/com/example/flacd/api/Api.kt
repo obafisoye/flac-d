@@ -15,7 +15,7 @@ object Api {
         .add(KotlinJsonAdapterFactory())
         .build()
 
-    // Retrofit instance to make API calls
+    // Retrofit instance for Discogs API
     private val retrofit = Retrofit.Builder()
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .baseUrl(BASE_URL)
@@ -25,5 +25,6 @@ object Api {
     val retrofitService: AlbumServices by lazy {
         retrofit.create(AlbumServices::class.java)
     }
+
 
 }

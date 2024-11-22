@@ -13,5 +13,9 @@ sealed class Destination(val route: String) {
     object ProfileDetail: Destination("profileDetail/{userId}"){
         fun createRoute(userId: Int?) = "profileDetail/$userId"
     }
+    object RelatedAlbums: Destination("relatedAlbums/{style}"){
+        fun createRoute(style: String?) = "relatedAlbums/$style"
+    }
+
 
 }

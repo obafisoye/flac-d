@@ -27,4 +27,14 @@ interface AlbumServices{
         @Query("format") format: String = "album",
         @Query("per_page") perPage: Int = 10,
     ): Call <AlbumData>
+
+    // Retrieves a list of most wanted albums by style
+    @GET("search")
+    fun getAlbumsByStyle(
+        @Query("token") token: String,
+        @Query("style") style: String,
+        @Query("type") type: String = "master",
+        @Query("sort") sort: String = "want",
+        @Query("per_page") perPage: Int = 7,
+    ): Call <AlbumData>
 }
