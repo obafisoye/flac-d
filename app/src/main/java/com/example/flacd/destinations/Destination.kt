@@ -6,12 +6,14 @@ package com.example.flacd.destinations
 sealed class Destination(val route: String) {
     object Home: Destination("home")
     object Search: Destination("search")
-    object Profile: Destination("profile")
+    object Profile: Destination("profile/{userId}"){
+        fun createRoute(userId: String?) = "profile/$userId"
+    }
     object AlbumDetail: Destination("albumDetail/{albumId}"){
         fun createRoute(albumId: Int?) = "albumDetail/$albumId"
     }
     object ProfileDetail: Destination("profileDetail/{userId}"){
-        fun createRoute(userId: Int?) = "profileDetail/$userId"
+        fun createRoute(userId: String?) = "profileDetail/$userId"
     }
     object RelatedAlbums: Destination("relatedAlbums/{style}"){
         fun createRoute(style: String?) = "relatedAlbums/$style"

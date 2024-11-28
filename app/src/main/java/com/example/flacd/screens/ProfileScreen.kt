@@ -11,10 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.example.flacd.api.model.UserProfile
 
 // Screen for displaying profile content
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier, context: Context){
+fun ProfileScreen(modifier: Modifier = Modifier, context: Context, user: UserProfile?){
     val sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
     val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
 
@@ -23,19 +24,22 @@ fun ProfileScreen(modifier: Modifier = Modifier, context: Context){
             .fillMaxSize()
             .background(Color.DarkGray)
     ){
-        if(isLoggedIn){
-            Button(
-                onClick = {
-                    sharedPref.edit()
-                        .putBoolean("isLoggedIn", false)
-                        .apply()
+        if (user != null) {
+            if(isLoggedIn){
+                Button(
+                    onClick = {
+                        sharedPref.edit()
+                            .putBoolean("isLoggedIn", false)
+                            .apply()
 
-                    Toast.makeText(context, "Logged Out", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Logged Out", Toast.LENGTH_SHORT).show()
 
+                    }
+                ) {
+                    Text(text = "Log Out")
                 }
-            ) {
-                Text(text = "Log Out")
             }
+             user.username?.let { Text(text = it, color = Color.White) }
         }
     }
 }

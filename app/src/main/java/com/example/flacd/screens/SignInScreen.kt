@@ -127,10 +127,11 @@ fun performSignIn(email: String, password: String, context: Context, keyboardCon
                 sharedPref.edit()
                     .putString("email", email)
                     .putString("password", password)
+                    .putString("userId", auth.currentUser?.uid)
                     .putBoolean("isLoggedIn", true)
                     .apply()
 
-                Log.d("sharedpref", "${sharedPref.getString("email", "")}, ${sharedPref.getString("password", "")}, ${sharedPref.getBoolean("isLoggedIn", false)}")
+                Log.d("sharedpref", "${sharedPref.getString("email", "")}, ${sharedPref.getString("password", "")}, ${sharedPref.getString("userId", "")}, ${sharedPref.getBoolean("isLoggedIn", false)}")
 
                 Toast.makeText(context, "Sign In Successful", Toast.LENGTH_SHORT).show()
 

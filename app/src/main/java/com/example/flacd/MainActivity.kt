@@ -6,9 +6,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,15 +45,13 @@ import com.example.flacd.screens.ProfileDetailScreen
 import com.example.flacd.screens.ProfileScreen
 import com.example.flacd.screens.RelatedAlbumsScreen
 import com.example.flacd.screens.SearchScreen
-import com.example.flacd.screens.SplashScreen
 import com.example.flacd.ui.theme.FLACdTheme
 import com.example.flacd.view.Navigation.BottomNav
 import com.example.flacd.viewmodel.AlbumViewModel
+import com.example.flacd.viewmodel.ProfileViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,8 +66,11 @@ class MainActivity : ComponentActivity() {
                     // app context
                     val context: Context = applicationContext
 
-                    // view model
-                    val viewModel: AlbumViewModel = ViewModelProvider(this).get(AlbumViewModel::class.java)
+                    // album view model
+                    val viewModel: AlbumViewModel = ViewModelProvider(this)[AlbumViewModel::class.java]
+
+                    // profile view model
+                    val profileViewModel: ProfileViewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
 
                     // firebase
                     val db = Firebase.firestore
@@ -80,7 +78,7 @@ class MainActivity : ComponentActivity() {
                     // fetch albums
                     val albumsManager = AlbumsManager(db)
 
-                    App(navController = navController, modifier = Modifier.padding(innerPadding), albumsManager, db, viewModel, context)
+                    App(navController = navController, modifier = Modifier.padding(innerPadding), albumsManager, db, viewModel, context, profileViewModel)
                 }
             }
         }
@@ -89,7 +87,7 @@ class MainActivity : ComponentActivity() {
     // Main app composable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App(navController: NavHostController, modifier: Modifier, albumsManager: AlbumsManager, db: FirebaseFirestore, viewModel: AlbumViewModel, context: Context) {
+fun App(navController: NavHostController, modifier: Modifier, albumsManager: AlbumsManager, db: FirebaseFirestore, viewModel: AlbumViewModel, context: Context, profileViewModel: ProfileViewModel) {
 
         // album variable to store album gotten from database
         var album by remember {
@@ -99,6 +97,7 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
         val dotoFont = FontFamily(
             Font(R.font.doto_variable)
         )
+
 
         Scaffold(
             topBar = {
@@ -156,7 +155,20 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
 
                 // Profile Navigation Route
                 composable(Destination.Profile.route) {
-                    ProfileScreen(modifier = Modifier.padding(paddingValues), context)
+                    val sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+                    val user_id = sharedPref.getString("userId", null)
+
+                    Log.i("User", "$user_id")
+
+                    LaunchedEffect(user_id) {
+                        if(user_id != null) {
+                            profileViewModel.loadUser(db, user_id)
+                        }
+                    }
+
+                    val user by profileViewModel.user
+
+                    ProfileScreen(modifier = Modifier.padding(paddingValues), context, user)
                 }
 
                 // Album Detail Navigation Route

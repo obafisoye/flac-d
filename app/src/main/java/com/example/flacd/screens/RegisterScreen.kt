@@ -143,6 +143,7 @@ fun registerUser(username: String,email: String, password: String, context: Cont
                 sharedPref.edit()
                     .putString("email", email)
                     .putString("password", password)
+                    .putString("userId", auth.currentUser?.uid)
                     .putBoolean("isLoggedIn", true)
                     .apply()
 
@@ -159,7 +160,7 @@ fun registerUser(username: String,email: String, password: String, context: Cont
                         }
                     }
                 }
-                Log.d("sharedpref", "${sharedPref.getString("email", "")}, ${sharedPref.getString("password", "")}, ${sharedPref.getBoolean("isLoggedIn", false)}")
+                Log.d("sharedpref", "${sharedPref.getString("email", "")}, ${sharedPref.getString("password", "")}, ${sharedPref.getString("userId", "")}, ${sharedPref.getBoolean("isLoggedIn", false)}")
 
                 Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()
 
