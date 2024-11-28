@@ -62,7 +62,7 @@ fun RegisterScreen(context: Context, modifier: Modifier = Modifier){
         ) {
             TextField(
                 value = username,
-                onValueChange = { username = it },
+                onValueChange = { username = it.trim() },
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth(),
@@ -72,7 +72,7 @@ fun RegisterScreen(context: Context, modifier: Modifier = Modifier){
 
             TextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = { email = it.trim() },
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth(),
@@ -82,7 +82,7 @@ fun RegisterScreen(context: Context, modifier: Modifier = Modifier){
 
             TextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { password = it.trim() },
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth(),
@@ -132,6 +132,7 @@ fun RegisterScreen(context: Context, modifier: Modifier = Modifier){
     }
 }
 
+// Function to register user with Firebase Authentication
 fun registerUser(username: String,email: String, password: String, context: Context, keyboardController: SoftwareKeyboardController?, auth: FirebaseAuth, firestore: FirebaseFirestore) {
     auth.createUserWithEmailAndPassword(email, password)
         .addOnCompleteListener { task ->
@@ -148,7 +149,15 @@ fun registerUser(username: String,email: String, password: String, context: Cont
                 val user = auth.currentUser
                 user?.let{
                     val userId = it.uid
-                    saveUser(username, userId, firestore)
+                    checkUsernameAvailability(username, firestore){ isAvailable ->
+                        if(isAvailable){
+                            saveUser(username, userId, email, firestore)
+                        }
+                        else{
+                            keyboardController?.hide()
+                            Toast.makeText(context, "Registration Failed", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
                 Log.d("sharedpref", "${sharedPref.getString("email", "")}, ${sharedPref.getString("password", "")}, ${sharedPref.getBoolean("isLoggedIn", false)}")
 
@@ -166,10 +175,13 @@ fun registerUser(username: String,email: String, password: String, context: Cont
         }
 }
 
-fun saveUser(username: String, userId: String, firestore: FirebaseFirestore){
+// Function to save user details in database
+fun saveUser(username: String, userId: String, email: String, firestore: FirebaseFirestore){
 
     val user = hashMapOf(
-        "username" to username
+        "username" to username,
+        "email" to email,
+        "uid" to userId,
     )
 
     firestore.collection("users")
@@ -180,6 +192,26 @@ fun saveUser(username: String, userId: String, firestore: FirebaseFirestore){
         }
         .addOnFailureListener{
             Log.d("firestore", "Error saving user")
+        }
+}
+
+// Function to check if username is available for registration
+fun checkUsernameAvailability(username: String, firestore: FirebaseFirestore, onResult: (Boolean) -> Unit){
+    firestore.collection("users")
+        .whereEqualTo("username", username)
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+            if(querySnapshot.isEmpty){
+                // username is available
+                onResult(true)
+            }else{
+                // username is available
+                onResult(false)
+            }
+       }
+        .addOnFailureListener{e ->
+            Log.e("Error checking username", "${e.message}")
+            onResult(false)
         }
 }
 

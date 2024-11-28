@@ -34,8 +34,8 @@ class AlbumViewModel: ViewModel(){
                         //Log.i("Search", "${albums.value}")
                         albums.value = response.body()?.results?: emptyList()
 
-//                        val albumsManager = AlbumsManager(db)
-//                        albumsManager.saveAlbumsToFirebase(albums.value, db)
+                        val albumsManager = AlbumsManager(db)
+                        albumsManager.saveAlbumsToFirebase(albums.value, db)
                     }
                 }
 

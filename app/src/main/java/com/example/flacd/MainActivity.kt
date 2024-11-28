@@ -85,94 +85,120 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
-// Main app composable
+    // Main app composable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(navController: NavHostController, modifier: Modifier, albumsManager: AlbumsManager, db: FirebaseFirestore, viewModel: AlbumViewModel, context: Context) {
 
-    // album variable to store album gotten from database
-    var album by remember {
-        mutableStateOf<Album?>(null)
-    }
+        // album variable to store album gotten from database
+        var album by remember {
+            mutableStateOf<Album?>(null)
+        }
 
-    val dotoFont = FontFamily(
-        Font(R.font.doto_variable)
-    )
+        val dotoFont = FontFamily(
+            Font(R.font.doto_variable)
+        )
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                modifier = Modifier.height(85.dp),
-                title = {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "FLACd",
-                            color = Color.White,
-                            fontFamily = dotoFont,
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.headlineSmall,
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.DarkGray,
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    modifier = Modifier.height(85.dp),
+                    title = {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "FLACd",
+                                color = Color.White,
+                                fontFamily = dotoFont,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.headlineSmall,
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.DarkGray,
+                    )
                 )
-            )
-        },
-        bottomBar = { BottomNav(navController = navController)}
+            },
+            bottomBar = { BottomNav(navController = navController) }
 
-    ){ paddingValues ->
-        paddingValues.calculateBottomPadding()
-        Spacer(modifier = Modifier.padding(10.dp))
+        ) { paddingValues ->
+            paddingValues.calculateBottomPadding()
+            Spacer(modifier = Modifier.padding(10.dp))
 
-        // Navigation Host
-        NavHost(navController = navController as NavHostController, startDestination = Destination.Home.route){
+            // Navigation Host
+            NavHost(
+                navController = navController as NavHostController,
+                startDestination = Destination.Home.route
+            ) {
 
-            // Home Navigation Route
-            composable(Destination.Home.route){
-                HomeScreen(modifier = Modifier.padding(paddingValues), albumsManager, navController)
-            }
+                // Home Navigation Route
+                composable(Destination.Home.route) {
+                    HomeScreen(
+                        modifier = Modifier.padding(paddingValues),
+                        albumsManager,
+                        navController
+                    )
+                }
 
-            // Search Navigation Route
-            composable(Destination.Search.route){
-                SearchScreen(modifier = Modifier.padding(paddingValues), viewModel = viewModel, db = db, navController)
-            }
+                // Search Navigation Route
+                composable(Destination.Search.route) {
+                    SearchScreen(
+                        modifier = Modifier.padding(paddingValues),
+                        viewModel = viewModel,
+                        db = db,
+                        navController
+                    )
+                }
 
-            // Profile Navigation Route
-            composable(Destination.Profile.route){
-                ProfileScreen(modifier = Modifier.padding(paddingValues), context)
-            }
+                // Profile Navigation Route
+                composable(Destination.Profile.route) {
+                    ProfileScreen(modifier = Modifier.padding(paddingValues), context)
+                }
 
-            // Album Detail Navigation Route
-            composable(Destination.AlbumDetail.route){ navBackStackEntry ->
-                val album_id: String? = navBackStackEntry.arguments?.getString("albumId")
+                // Album Detail Navigation Route
+                composable(Destination.AlbumDetail.route) { navBackStackEntry ->
+                    val album_id: String? = navBackStackEntry.arguments?.getString("albumId")
 
-                LaunchedEffect(album_id) {
-                    if(album_id != null){
-                        album = albumsManager.getAlbumById(db, album_id)
+                    LaunchedEffect(album_id) {
+                        if (album_id != null) {
+                            album = albumsManager.getAlbumById(db, album_id)
+                        }
+                    }
+
+                    album?.let {
+                        AlbumDetailScreen(
+                            album = it,
+                            modifier = Modifier.padding(paddingValues),
+                            viewModel = viewModel,
+                            db = db,
+                            navController = navController
+                        )
                     }
                 }
 
-                album?.let { AlbumDetailScreen(album = it, modifier = Modifier.padding(paddingValues), viewModel = viewModel, db = db, navController = navController) }
-            }
+                // Profile Detail Navigation Route
+                composable(Destination.ProfileDetail.route) {
+                    ProfileDetailScreen(modifier = Modifier.padding(paddingValues))
+                }
 
-            // Profile Detail Navigation Route
-            composable(Destination.ProfileDetail.route){
-                ProfileDetailScreen(modifier = Modifier.padding(paddingValues))
-            }
+                // Related Albums Screen
+                composable(Destination.RelatedAlbums.route) { navBackStackEntry ->
+                    val style: String? = navBackStackEntry.arguments?.getString("style")
 
-            // Related Albums Screen
-            composable(Destination.RelatedAlbums.route){ navBackStackEntry ->
-                val style: String? = navBackStackEntry.arguments?.getString("style")
-
-                style?.let { RelatedAlbumsScreen(style = it, modifier = Modifier.padding(paddingValues), viewModel = viewModel, navController = navController) }
+                    style?.let {
+                        RelatedAlbumsScreen(
+                            style = it,
+                            modifier = Modifier.padding(paddingValues),
+                            viewModel = viewModel,
+                            navController = navController
+                        )
+                    }
+                }
             }
         }
     }
 }
-

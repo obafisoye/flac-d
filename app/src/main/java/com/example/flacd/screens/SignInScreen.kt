@@ -55,7 +55,7 @@ fun SignInScreen(context: Context, modifier: Modifier = Modifier) {
         ) {
             TextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = { email = it.trim() },
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth(),
@@ -65,7 +65,7 @@ fun SignInScreen(context: Context, modifier: Modifier = Modifier) {
 
             TextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { password = it.trim() },
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth(),

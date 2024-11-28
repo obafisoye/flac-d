@@ -85,7 +85,8 @@ class AlbumsManager(private val db: FirebaseFirestore) {
                             "thumb" to album.thumb,
                             "title" to album.title,
                             "type" to album.type,
-                            "year" to album.year
+                            "year" to album.year,
+                            "createdAt" to System.currentTimeMillis()
                         )
 
                         // add album to firestore
