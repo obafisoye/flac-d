@@ -8,7 +8,7 @@ FLACd addresses the gap between algorithm-driven discovery and personal curation
 - **Browse Albums:** Search and explore albums fetched from the Discogs API.
 - **Responsive Design:** Seamless user experience across devices.
 - **User Profiles:** Users can create profiles with their name, email, bio and upload an avatar.
-- **List Curation**: Users can create lists of albums and give them a title and a description.
+- **List Curation**: Users can create lists of albums, giving them a title and description.
 
 ## Installation
 Before you begin, ensure you have the following:
