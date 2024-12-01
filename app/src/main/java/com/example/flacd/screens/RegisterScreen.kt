@@ -182,7 +182,9 @@ fun saveUser(username: String, userId: String, email: String, firestore: Firebas
     val user = hashMapOf(
         "username" to username,
         "email" to email,
-        "uid" to userId,
+        "userId" to userId,
+        "profilePictureUrl" to "",
+        "bio" to ""
     )
 
     firestore.collection("users")

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -20,6 +21,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,11 +47,13 @@ import com.example.flacd.screens.ProfileDetailScreen
 import com.example.flacd.screens.ProfileScreen
 import com.example.flacd.screens.RelatedAlbumsScreen
 import com.example.flacd.screens.SearchScreen
+import com.example.flacd.ui.ProfileManager
 import com.example.flacd.ui.theme.FLACdTheme
 import com.example.flacd.view.Navigation.BottomNav
 import com.example.flacd.viewmodel.AlbumViewModel
 import com.example.flacd.viewmodel.ProfileViewModel
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 
@@ -75,10 +79,18 @@ class MainActivity : ComponentActivity() {
                     // firebase
                     val db = Firebase.firestore
 
+                    // firebase auth
+                    val auth = FirebaseAuth.getInstance()
+
                     // fetch albums
                     val albumsManager = AlbumsManager(db)
 
-                    App(navController = navController, modifier = Modifier.padding(innerPadding), albumsManager, db, viewModel, context, profileViewModel)
+                    // profile manager
+                    val profileManager = ProfileManager(db)
+
+                    App(navController = navController, modifier = Modifier.padding(innerPadding),
+                        albumsManager, db, viewModel, context, profileViewModel, profileManager,
+                        auth)
                 }
             }
         }
@@ -87,7 +99,9 @@ class MainActivity : ComponentActivity() {
     // Main app composable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App(navController: NavHostController, modifier: Modifier, albumsManager: AlbumsManager, db: FirebaseFirestore, viewModel: AlbumViewModel, context: Context, profileViewModel: ProfileViewModel) {
+fun App(navController: NavHostController, modifier: Modifier, albumsManager: AlbumsManager,
+        db: FirebaseFirestore, viewModel: AlbumViewModel, context: Context,
+        profileViewModel: ProfileViewModel, profileManager: ProfileManager, auth: FirebaseAuth) {
 
         // album variable to store album gotten from database
         var album by remember {
@@ -99,6 +113,7 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
         )
 
 
+
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -106,7 +121,7 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
                     title = {
                         Box(
                             modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.CenterStart
                         ) {
                             Text(
                                 text = "FLACd",
@@ -155,10 +170,8 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
 
                 // Profile Navigation Route
                 composable(Destination.Profile.route) {
-                    val sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-                    val user_id = sharedPref.getString("userId", null)
-
-                    Log.i("User", "$user_id")
+                    // user id of current user logged in
+                    val user_id = auth.currentUser?.uid
 
                     LaunchedEffect(user_id) {
                         if(user_id != null) {
@@ -166,9 +179,18 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
                         }
                     }
 
-                    val user by profileViewModel.user
+                    val user by profileViewModel.user.collectAsState()
 
-                    ProfileScreen(modifier = Modifier.padding(paddingValues), context, user)
+                    if (user != null) {
+                        ProfileScreen(modifier = Modifier.padding(paddingValues),
+                            context, user, profileManager, auth)
+                    }
+                    else{
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(color = Color.White)
+                        }
+                    }
+
                 }
 
                 // Album Detail Navigation Route
