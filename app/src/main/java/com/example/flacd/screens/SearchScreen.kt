@@ -74,7 +74,7 @@ fun SearchScreen(modifier: Modifier = Modifier, viewModel: AlbumViewModel, db: F
                             viewModel.searchAlbum(query, db)
                         }
                     },
-                    label = { Text("Search for an album/artist", color = Color.White) },
+                    label = { Text("Search for an album/artist", color = Color.White, fontSize = 14.sp) },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(onSearch = {
                         keyboardController?.hide()
