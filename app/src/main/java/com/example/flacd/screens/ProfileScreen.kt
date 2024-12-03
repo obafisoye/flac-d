@@ -1,6 +1,8 @@
 package com.example.flacd.screens
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -44,24 +46,32 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.flacd.R
+import com.example.flacd.SignInActivity
 import com.example.flacd.api.model.UserProfile
 import com.example.flacd.ui.ProfileManager
 import com.google.firebase.auth.FirebaseAuth
 
 // Screen for displaying profile content
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier, context: Context, user: UserProfile?,
+fun ProfileScreen(modifier: Modifier = Modifier, appContext: Context, user: UserProfile?,
                   profileManager: ProfileManager, auth: FirebaseAuth){
+
 
     // variable to track if the user is editing their profile
     var isEditing by remember { mutableStateOf(false) }
+
+    // activity context
+    val activityContext = LocalContext.current
+
+    // variable to track if user is in their settings
+    var inSettings by remember { mutableStateOf(false) }
 
     var username by remember { mutableStateOf(user?.username ?: "") }
     var bio by remember { mutableStateOf(user?.bio ?: "") }
     var profilePictureUrl by remember { mutableStateOf(user?.profilePictureUrl ?: "") }
 
     // shared preferences to track login status
-    val sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+    val sharedPref = appContext.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
     val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
     val scrollState = rememberScrollState()
 
@@ -192,45 +202,102 @@ fun ProfileScreen(modifier: Modifier = Modifier, context: Context, user: UserPro
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Button(
-                        onClick = {
-                            // save changes to profile
-                            if (isEditing) {
-                                val updatedUserProfile = UserProfile(
-                                    user.userId, username, user.email, profilePictureUrl, bio
-                                )
-
-                                profileManager.updateUserProfile(context, updatedUserProfile)
-                            }
-                            isEditing = !isEditing
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.teal_700),
-                        ),
-                    ) {
-                        Text(text = if (isEditing) "Save" else "Edit Profile")
-                    }
-
-                    // If button is clicked changed logged in status to false
-                    if(isLoggedIn){
+                    if(!inSettings){
                         Button(
                             onClick = {
-                                sharedPref.edit()
-                                    .putBoolean("isLoggedIn", false)
-                                    .apply()
-                                auth.signOut()
-                                Toast.makeText(context, "Logged Out", Toast.LENGTH_SHORT).show()
+                                // save changes to profile
+                                if (isEditing) {
+                                    val updatedUserProfile = UserProfile(
+                                        user.userId, username, user.email, profilePictureUrl, bio
+                                    )
+
+                                    profileManager.updateUserProfile(appContext, updatedUserProfile)
+                                }
+                                isEditing = !isEditing
                             },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = colorResource(id = R.color.teal_700),
                             ),
                         ) {
-                            Text(text = "Log Out")
+                            Text(text = if (isEditing) "Save" else "Edit Profile")
+                        }
+                    }
+
+                    if(isEditing){
+                        Button(
+                            onClick = {
+                                isEditing = !isEditing
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(id = R.color.teal_700),
+                            ),
+                        ){
+                            Text(text = "Cancel")
+                        }
+                    }
+
+                    if(!isEditing) {
+                        Button(
+                            onClick = {
+                                inSettings = !inSettings
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(id = R.color.teal_700),
+                            ),
+                        ) {
+                            Text(text = if (inSettings) "Cancel" else "Settings")
+                        }
+                    }
+
+
+                    // if settings button is clicked display options
+                    if(inSettings){
+                        // if button is clicked delete user
+                        Button(
+                            onClick = {
+                                profileManager.reAuthAndDeleteUser(appContext, activityContext, onSuccess = {
+                                    sharedPref.edit().clear().apply()
+                                    // restarts app when deletion is successful
+                                    restartApp(activityContext)
+                                })
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(id = R.color.teal_700),
+                            ),
+                        ){
+                            Text(text = "Delete Account")
+                        }
+
+                        // If button is clicked changed logged in status to false
+                        if(isLoggedIn){
+                            Button(
+                                onClick = {
+                                    sharedPref.edit().clear().apply()
+                                    auth.signOut()
+                                    Toast.makeText(appContext, "Logged Out", Toast.LENGTH_SHORT).show()
+                                    restartApp(activityContext)
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colorResource(id = R.color.teal_700),
+                                ),
+                            ) {
+                                Text(text = "Log Out")
+                            }
                         }
                     }
                 }
             }
-
         }
+    }
+}
+
+// restarts app when called
+fun restartApp(activityContext: Context){
+    val intent = Intent(activityContext, SignInActivity::class.java)
+    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    activityContext.startActivity(intent)
+
+    if(activityContext is Activity){
+        activityContext.finish()
     }
 }

@@ -153,6 +153,15 @@ fun registerUser(username: String,email: String, password: String, context: Cont
                     checkUsernameAvailability(username, firestore){ isAvailable ->
                         if(isAvailable){
                             saveUser(username, userId, email, firestore)
+
+                            Log.d("sharedpref", "${sharedPref.getString("email", "")}, ${sharedPref.getString("password", "")}, ${sharedPref.getString("userId", "")}, ${sharedPref.getBoolean("isLoggedIn", false)}")
+
+                            Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()
+
+                            val intent = Intent(context, MainActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            intent.putExtra("userId", auth.currentUser?.uid)
+                            context.startActivity(intent)
                         }
                         else{
                             keyboardController?.hide()
@@ -160,15 +169,6 @@ fun registerUser(username: String,email: String, password: String, context: Cont
                         }
                     }
                 }
-                Log.d("sharedpref", "${sharedPref.getString("email", "")}, ${sharedPref.getString("password", "")}, ${sharedPref.getString("userId", "")}, ${sharedPref.getBoolean("isLoggedIn", false)}")
-
-                Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()
-
-                var intent = Intent(context, MainActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                intent.putExtra("userId", auth.currentUser?.uid)
-                context.startActivity(intent)
-
             } else {
                 keyboardController?.hide()
                 Toast.makeText(context, "Registration Failed", Toast.LENGTH_SHORT).show()
@@ -208,7 +208,7 @@ fun checkUsernameAvailability(username: String, firestore: FirebaseFirestore, on
                 // username is available
                 onResult(true)
             }else{
-                // username is available
+                // username is not available
                 onResult(false)
             }
        }
