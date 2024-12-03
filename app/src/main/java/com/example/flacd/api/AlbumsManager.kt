@@ -17,26 +17,45 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
+/**
+ * A manager class for managing album data.
+ * @param db The Firebase Firestore database instance.
+ */
 class AlbumsManager(private val db: FirebaseFirestore) {
+    /**
+     * A mutable state list for holding album response data.
+     */
     private var _albumsResponse = mutableStateOf<List<Album>>(emptyList())
+
+    /**
+     * The Discogs API token used for authentication.
+     */
     private val token = "yKOQpAcVvaYUwqOcJyUYlMVIpdlTjEJIbEQKzrEu"
 
 
-    // public state variable for album data
+    /**
+     * A public state variable for holding album data.
+     */
     val albumsResponse: MutableState<List<Album>>
         @Composable get() = remember {
             _albumsResponse
         }
 
-    // async function to get album data
+    /**
+     * Initializes the manager by fetching album data from the Discogs API.
+     */
     init {
         getAlbums()
     }
 
-    // fetches a list of most wanted albums from the Discogs API and updates the albumsResponse state
-    // changed to update database with unique albums and then fetch albums from database
+    /**
+     * Fetches album data from the Discogs API and updates the albumsResponse state,
+     * saves the albums to the database and then fetches the albums from the database.
+     */
     private fun getAlbums() {
+        /**
+         * Enqueues a Retrofit call to fetch album data from the Discogs API.
+         */
         val service = Api.retrofitService.getMostWantedAlbums(token)
 
         service.enqueue(object : Callback<AlbumData> {
@@ -63,7 +82,12 @@ class AlbumsManager(private val db: FirebaseFirestore) {
         })
     }
 
-    // iterates through the album list and saves each album to a firestore collection named "albums"
+    /**
+     * Iterates through the album list and saves each album to a firestore collection named "albums".
+     * @param albumList The list of albums to be saved.
+     * @param db The Firebase Firestore database instance.
+     * @throws Exception if an error occurs while saving the albums.
+     */
     fun saveAlbumsToFirebase(albumList: List<Album>, db: FirebaseFirestore) {
         val collection: CollectionReference = db.collection("albums")
 
@@ -101,7 +125,10 @@ class AlbumsManager(private val db: FirebaseFirestore) {
         }
     }
 
-    // function to get albums from firestore
+    /**
+     * Retrieves albums from the Firebase Firestore database and updates the albumsResponse state.
+     * @param db The Firebase Firestore database instance.
+     */
     fun getAlbumsFromFirestore(db: FirebaseFirestore) {
         CoroutineScope(Dispatchers.IO).launch {
             val collection: CollectionReference = db.collection("albums")
@@ -124,7 +151,12 @@ class AlbumsManager(private val db: FirebaseFirestore) {
         }
     }
 
-    // function to get a single album from firestore
+    /**
+     * Retrieves a single album from the Firebase Firestore database by its ID.
+     * @param db The Firebase Firestore database instance.
+     * @param albumId The ID of the album to retrieve.
+     * @throws Exception if an error occurs while retrieving the album.
+     */
     suspend fun getAlbumById(db: FirebaseFirestore, albumId: String): Album? {
         return try {
             // query firestore with specific movie id

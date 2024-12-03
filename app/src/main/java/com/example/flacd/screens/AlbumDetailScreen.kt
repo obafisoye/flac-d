@@ -42,13 +42,26 @@ import com.example.flacd.api.model.Album
 import com.example.flacd.viewmodel.AlbumViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 
-// Screen for displaying album details
+/**
+ * A composable function that displays the details of an album.
+ * @param modifier The modifier to be applied to the layout.
+ * @param album The album to display.
+ * @param viewModel The view model for managing album data.
+ * @param db The Firebase Firestore database.
+ * @param navController The navigation controller for navigating between screens.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album, viewModel: AlbumViewModel, db: FirebaseFirestore, navController: NavController){
 
+    /**
+     * A scroll state for vertical scrolling.
+     */
     val scrollState = rememberScrollState()
 
+    /**
+     * A font family for the text.
+     */
     val interFont = FontFamily(
         Font(R.font.inter_variable)
     )
@@ -85,6 +98,7 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album, viewModel: Al
             }
 
             Spacer(modifier = Modifier.height(15.dp))
+
             // album cover image
             AsyncImage(
                 modifier = Modifier
@@ -105,9 +119,15 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album, viewModel: Al
             FlowRow(
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ){
+                /**
+                 * Limits the number of labels to 4
+                 */
                 val labels = album.label?.take(4)
 
                 labels?.forEach {
+                    /**
+                     * Calculates the width of the button based on the length of the label
+                     */
                     val buttonWidth = (it.length * 10).dp
                     Button(
                         onClick = {},
@@ -140,6 +160,9 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album, viewModel: Al
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 album.genre?.forEach {
+                    /**
+                     * Calculates the width of the button based on the length of the label
+                     */
                     val buttonWidth = (it.length * 10).dp
                     Button(
                         onClick = {},
@@ -172,6 +195,9 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album, viewModel: Al
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 album.style?.forEach {
+                    /**
+                     * Calculates the width of the button based on the length of the label
+                     */
                     val buttonWidth = (it.length * 10).dp
                     Button(
                         onClick = {
@@ -206,6 +232,9 @@ fun AlbumDetailScreen(modifier: Modifier = Modifier, album: Album, viewModel: Al
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 album.format?.forEach {
+                    /**
+                     * Calculates the width of the button based on the length of the label
+                     */
                     val buttonWidth = (it.length * 10).dp
                     Button(
                         onClick = {},

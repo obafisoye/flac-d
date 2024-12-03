@@ -11,8 +11,17 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
+/**
+ * A class for managing user profiles in the Firebase Firestore database.
+ * @param db The Firebase Firestore database instance.
+ */
 class ProfileManager(private val db: FirebaseFirestore){
-    // function to get user data from firebase and return it as a UserProfile object
+
+    /**
+     * Gets a user profile from the Firebase Firestore database.
+     * @param userId The ID of the user to retrieve.
+     * @throws Exception if there is an error getting the user profile.
+     */
     suspend fun getUser(userId: String): UserProfile? {
         return try{
             val userDoc = db.collection("users").document(userId).get().await()
@@ -27,7 +36,11 @@ class ProfileManager(private val db: FirebaseFirestore){
         }
     }
 
-    // function to update user data in firebase
+    /**
+     * Updates a user profile in the Firebase Firestore database.
+     * @param context The application context.
+     * @param userProfile The user profile containing the updated information.
+     */
     fun updateUserProfile(context: Context, userProfile: UserProfile){
         val userRef = userProfile.userId?.let { db.collection("users").document(it) }
 
@@ -48,7 +61,12 @@ class ProfileManager(private val db: FirebaseFirestore){
             }
     }
 
-    // re-authenticate user with credentials then delete said user
+    /**
+     * Re-authenticates and deletes a user account.
+     * @param appContext The application context.
+     * @param activityContext The activity context.
+     * @param onSuccess A callback function to be executed on successful deletion.
+     */
     fun reAuthAndDeleteUser(appContext: Context, activityContext: Context, onSuccess: () -> Unit){
         val user = FirebaseAuth.getInstance().currentUser
 
@@ -70,8 +88,12 @@ class ProfileManager(private val db: FirebaseFirestore){
         }
     }
 
-    // delete user from auth
-    fun deleteUser(context: Context, onSuccess: () -> Unit){
+    /**
+     * Deletes a user account.
+     * @param context The application context.
+     * @param onSuccess A callback function to be executed on successful deletion.
+     */
+    private fun deleteUser(context: Context, onSuccess: () -> Unit){
         val user = FirebaseAuth.getInstance().currentUser
         if(user != null){
             val userId = user.uid
@@ -91,7 +113,12 @@ class ProfileManager(private val db: FirebaseFirestore){
         }
     }
 
-    // delete user data from firestore
+    /**
+     * Deletes user data from the Firebase Firestore database.
+     * @param context The application context.
+     * @param userId The ID of the user to delete.
+     * @param onSuccess A callback function to be executed on successful deletion.
+     */
     private fun deleteUserData(context: Context, userId: String, onSuccess: () -> Unit){
         db.collection("users").document(userId)
             .delete()
@@ -108,7 +135,11 @@ class ProfileManager(private val db: FirebaseFirestore){
             }
     }
 
-    // prompts user for password to delete account
+    /**
+     * Prompts the user for a password to delete their account.
+     * @param context The application context.
+     * @param callback A callback function to be executed with the entered password.
+     */
     private fun promptPassword(context: Context, callback: (String) -> Unit){
         val inputField = EditText(context)
         inputField.hint = "Enter your password"

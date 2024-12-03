@@ -42,15 +42,29 @@ import com.example.flacd.R
 import com.example.flacd.viewmodel.AlbumViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 
-// Screen for displaying and searching for content
+/**
+ * Screen for searching for and displaying albums.
+ * @param modifier The modifier to be applied to the layout.
+ * @param viewModel The AlbumViewModel instance.
+ * @param db The Firebase Firestore database.
+ * @param navController The navigation controller for navigating between screens.
+ */
 @Composable
 fun SearchScreen(modifier: Modifier = Modifier, viewModel: AlbumViewModel, db: FirebaseFirestore, navController: NavController){
 
-    // album to be searched
+    /**
+     * A query for searching albums.
+     */
     var query by rememberSaveable { viewModel.searchTerm }
 
+    /**
+     * A keyboard controller for hiding the keyboard.
+     */
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    /**
+     * A font family for text.
+     */
     val interFont = FontFamily(
         Font(R.font.inter_variable)
     )

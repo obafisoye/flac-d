@@ -19,13 +19,24 @@ import androidx.compose.ui.unit.sp
 import com.example.flacd.R
 import kotlinx.coroutines.delay
 
-// Loading Screen
+/**
+ * Splash screen composable
+ * @param modifier Modifier to be applied to the layout
+ * @param onTimeout Callback to be invoked when the splash screen times out
+ */
 @Composable
 fun SplashScreen(modifier: Modifier, onTimeout: () -> Unit){
+
+    /**
+     * Font family for the text
+     */
     val dotoFont = FontFamily(
         Font(R.font.doto_variable)
     )
-    
+
+    /**
+     * Launches a coroutine to delay the splash screen for 2 seconds before invoking the onTimeout callback
+     */
     LaunchedEffect(Unit) {
         delay(2000)
         onTimeout()

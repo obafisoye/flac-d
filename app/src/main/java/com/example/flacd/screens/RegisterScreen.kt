@@ -35,15 +35,42 @@ import com.example.flacd.SignInActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
+/**
+ * Screen for registering a new user.
+ * @param context The context of the application.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun RegisterScreen(context: Context, modifier: Modifier = Modifier){
 
+    /**
+     * The username of the user.
+     */
     var username by remember { mutableStateOf("")}
+
+    /**
+     * The email address of the user.
+     */
     var email by remember { mutableStateOf("")}
+
+    /**
+     * The password of the user.
+     */
     var password by remember { mutableStateOf("")}
+
+    /**
+     * The keyboard controller for managing the software keyboard.
+     */
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    /**
+     * The Firebase Authentication instance.
+     */
     val auth = FirebaseAuth.getInstance()
+
+    /**
+     * The Firebase Firestore instance.
+     */
     val firestore = FirebaseFirestore.getInstance()
 
 
@@ -112,6 +139,7 @@ fun RegisterScreen(context: Context, modifier: Modifier = Modifier){
                 
                 Button(
                     onClick = {
+                        // If register is clicked direct to sign in activity
                         val intent = Intent(context, SignInActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         context.startActivity(intent)
@@ -132,13 +160,24 @@ fun RegisterScreen(context: Context, modifier: Modifier = Modifier){
     }
 }
 
-// Function to register user with Firebase Authentication
-fun registerUser(username: String,email: String, password: String, context: Context, keyboardController: SoftwareKeyboardController?, auth: FirebaseAuth, firestore: FirebaseFirestore) {
+/**
+ * Function to register user with Firebase Authentication
+ * @param username The username of the user.
+ * @param email The email address of the user.
+ * @param password The password of the user.
+ * @param context The context of the application.
+ * @param keyboardController The keyboard controller for managing the software keyboard.
+ * @param auth The Firebase Authentication instance.
+ * @param firestore The Firebase Firestore instance.
+ */
+fun registerUser(username: String, email: String, password: String, context: Context,
+                 keyboardController: SoftwareKeyboardController?, auth: FirebaseAuth, firestore: FirebaseFirestore) {
+
     auth.createUserWithEmailAndPassword(email, password)
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 keyboardController?.hide()
-                // save email and password to shared preferences
+                // Save email and password to shared preferences
                 val sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
                 sharedPref.edit()
                     .putString("email", email)
@@ -176,7 +215,13 @@ fun registerUser(username: String,email: String, password: String, context: Cont
         }
 }
 
-// Function to save user details in database
+/**
+ * Function to save user details in database
+ * @param username The username of the user.
+ * @param userId The unique identifier of the user.
+ * @param email The email address of the user.
+ * @param firestore The Firebase Firestore instance.
+ */
 fun saveUser(username: String, userId: String, email: String, firestore: FirebaseFirestore){
 
     val user = hashMapOf(
@@ -198,7 +243,12 @@ fun saveUser(username: String, userId: String, email: String, firestore: Firebas
         }
 }
 
-// Function to check if username is available for registration
+/**
+ * Function to check if username is available for registration
+ * @param username The username to check.
+ * @param firestore The Firebase Firestore instance.
+ * @param onResult A callback function to handle the result of the check.
+ */
 fun checkUsernameAvailability(username: String, firestore: FirebaseFirestore, onResult: (Boolean) -> Unit){
     firestore.collection("users")
         .whereEqualTo("username", username)

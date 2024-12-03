@@ -51,30 +51,62 @@ import com.example.flacd.api.model.UserProfile
 import com.example.flacd.ui.ProfileManager
 import com.google.firebase.auth.FirebaseAuth
 
-// Screen for displaying profile content
+/**
+ * Screen for displaying profile content
+ * @param modifier The modifier to be applied to the layout.
+ * @param appContext The application context.
+ * @param user The user profile.
+ * @param profileManager The class for managing profile data.
+ * @param auth The Firebase authentication instance.
+ */
 @Composable
 fun ProfileScreen(modifier: Modifier = Modifier, appContext: Context, user: UserProfile?,
                   profileManager: ProfileManager, auth: FirebaseAuth){
 
-
-    // variable to track if the user is editing their profile
+    /**
+     * A variable to track if the user is editing their profile.
+     */
     var isEditing by remember { mutableStateOf(false) }
 
-    // activity context
+    /**
+     * The activity context.
+     */
     val activityContext = LocalContext.current
 
-    // variable to track if user is in their settings
+    /**
+     * A variable to track if the user is in their settings.
+     */
     var inSettings by remember { mutableStateOf(false) }
 
+    /**
+     * The user's username
+     */
     var username by remember { mutableStateOf(user?.username ?: "") }
+
+    /**
+     * The user's bio
+     */
     var bio by remember { mutableStateOf(user?.bio ?: "") }
+
+    /**
+     * The user's profile picture URL
+     */
     var profilePictureUrl by remember { mutableStateOf(user?.profilePictureUrl ?: "") }
 
-    // shared preferences to track login status
+    /**
+     * Shared preferences to track login status
+     */
     val sharedPref = appContext.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
     val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
+
+    /**
+     * A scroll state for vertical scrolling.
+     */
     val scrollState = rememberScrollState()
 
+    /**
+     * A font family for the text.
+     */
     val interFont = FontFamily(
         Font(R.font.inter_variable)
     )
@@ -291,7 +323,10 @@ fun ProfileScreen(modifier: Modifier = Modifier, appContext: Context, user: User
     }
 }
 
-// restarts app when called
+/**
+ * Restarts the app
+ * @param activityContext The activity context.
+ */
 fun restartApp(activityContext: Context){
     val intent = Intent(activityContext, SignInActivity::class.java)
     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

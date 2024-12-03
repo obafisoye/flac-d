@@ -33,11 +33,27 @@ import com.example.flacd.MainActivity
 import com.example.flacd.RegisterActivity
 import com.google.firebase.auth.FirebaseAuth
 
+/**
+ * Screen for signing in users.
+ * @param context The application context.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun SignInScreen(context: Context, modifier: Modifier = Modifier) {
 
+    /**
+     * The email of the user.
+     */
     var email by remember { mutableStateOf("") }
+
+    /**
+     * The password of the user.
+     */
     var password by remember { mutableStateOf("") }
+
+    /**
+     * A keyboard controller for hiding the keyboard.
+     */
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Box(
@@ -113,8 +129,18 @@ fun SignInScreen(context: Context, modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * Performs the sign in process.
+ * @param email The email of the user.
+ * @param password The password of the user.
+ * @param context The application context.
+ * @param keyboardController A keyboard controller for hiding the keyboard.
+ */
 fun performSignIn(email: String, password: String, context: Context, keyboardController: SoftwareKeyboardController?){
 
+    /**
+     * A Firebase Authentication instance.
+     */
     val auth = FirebaseAuth.getInstance()
 
     auth.signInWithEmailAndPassword(email, password)
@@ -122,7 +148,7 @@ fun performSignIn(email: String, password: String, context: Context, keyboardCon
             if (task.isSuccessful) {
                 keyboardController?.hide()
 
-                // save email and password to shared preferences
+                // Save email and password to shared preferences
                 val sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
                 sharedPref.edit()
                     .putString("email", email)
@@ -135,7 +161,8 @@ fun performSignIn(email: String, password: String, context: Context, keyboardCon
 
                 Toast.makeText(context, "Sign In Successful", Toast.LENGTH_SHORT).show()
 
-                var intent = Intent(context, MainActivity::class.java)
+                // Redirect to main activity after sign in is successful
+                val intent = Intent(context, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 intent.putExtra("userId", auth.currentUser?.uid)
                 context.startActivity(intent)

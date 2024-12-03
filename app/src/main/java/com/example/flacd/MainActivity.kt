@@ -65,29 +65,49 @@ class MainActivity : ComponentActivity() {
             FLACdTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
+                    /**
+                     * Navigation Controller
+                     */
                     val navController = rememberNavController()
 
-                    // app context
+                    /**
+                     * Application context
+                     */
                     val context: Context = applicationContext
 
-                    // album view model
+                    /**
+                     * View model for album data
+                     */
                     val viewModel: AlbumViewModel = ViewModelProvider(this)[AlbumViewModel::class.java]
 
-                    // profile view model
+                    /**
+                     * View model for profile data
+                     */
                     val profileViewModel: ProfileViewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
 
-                    // firebase
+                    /**
+                     * Firebase Firestore database
+                     */
                     val db = Firebase.firestore
 
-                    // firebase auth
+                    /**
+                     * Firebase Authentication instance
+                     */
                     val auth = FirebaseAuth.getInstance()
 
-                    // fetch albums
+                    /**
+                     * Albums Manager
+                     */
                     val albumsManager = AlbumsManager(db)
 
-                    // profile manager
+                    /**
+                     * Profile Manager
+                     */
                     val profileManager = ProfileManager(db)
 
+                    /**
+                     * App composable
+                     */
                     App(navController = navController, modifier = Modifier.padding(innerPadding),
                         albumsManager, db, viewModel, context, profileViewModel, profileManager,
                         auth)
@@ -96,18 +116,34 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // Main app composable
-@OptIn(ExperimentalMaterial3Api::class)
+    /**
+     * App composable.
+     * @param navController The navigation controller.
+     * @param modifier The modifier to be applied to the layout.
+     * @param albumsManager The albums manager.
+     * @param db The Firebase Firestore database.
+     * @param viewModel The album view model.
+     * @param context The application context.
+     * @param profileViewModel The profile view model.
+     * @param profileManager The profile manager.
+     * @param auth The Firebase Authentication instance.
+     */
+    @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(navController: NavHostController, modifier: Modifier, albumsManager: AlbumsManager,
         db: FirebaseFirestore, viewModel: AlbumViewModel, context: Context,
         profileViewModel: ProfileViewModel, profileManager: ProfileManager, auth: FirebaseAuth) {
 
-        // album variable to store album gotten from database
+        /**
+         * Album variable to store album gotten from database
+         */
         var album by remember {
             mutableStateOf<Album?>(null)
         }
 
+        /**
+         * A font family for the text.
+         */
         val dotoFont = FontFamily(
             Font(R.font.doto_variable)
         )
@@ -143,13 +179,17 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
             paddingValues.calculateBottomPadding()
             Spacer(modifier = Modifier.padding(10.dp))
 
-            // Navigation Host
+            /**
+             * Navigation Graph
+             */
             NavHost(
                 navController = navController as NavHostController,
                 startDestination = Destination.Home.route
             ) {
 
-                // Home Navigation Route
+                /**
+                 * Home Navigation Route
+                 */
                 composable(Destination.Home.route) {
                     HomeScreen(
                         modifier = Modifier.padding(paddingValues),
@@ -158,7 +198,9 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
                     )
                 }
 
-                // Search Navigation Route
+                /**
+                 * Search Navigation Route
+                 */
                 composable(Destination.Search.route) {
                     SearchScreen(
                         modifier = Modifier.padding(paddingValues),
@@ -168,9 +210,11 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
                     )
                 }
 
-                // Profile Navigation Route
+                /**
+                 * Profile Navigation Route
+                 */
                 composable(Destination.Profile.route) {
-                    // user id of current user logged in
+                    // User id of current user
                     val user_id = auth.currentUser?.uid
 
                     LaunchedEffect(user_id) {
@@ -179,6 +223,7 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
                         }
                     }
 
+                    // User state
                     val user by profileViewModel.user.collectAsState()
 
                     if (user != null) {
@@ -193,8 +238,11 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
 
                 }
 
-                // Album Detail Navigation Route
+                /**
+                 * Album Detail Navigation Route
+                 */
                 composable(Destination.AlbumDetail.route) { navBackStackEntry ->
+                    // Album id obtained from navigation
                     val album_id: String? = navBackStackEntry.arguments?.getString("albumId")
 
                     LaunchedEffect(album_id) {
@@ -214,13 +262,18 @@ fun App(navController: NavHostController, modifier: Modifier, albumsManager: Alb
                     }
                 }
 
-                // Profile Detail Navigation Route
+                /**
+                 * Profile Detail Navigation Route
+                 */
                 composable(Destination.ProfileDetail.route) {
                     ProfileDetailScreen(modifier = Modifier.padding(paddingValues))
                 }
 
-                // Related Albums Screen
+                /**
+                 * Related Albums Navigation Route
+                 */
                 composable(Destination.RelatedAlbums.route) { navBackStackEntry ->
+                    // Style obtained from navigation
                     val style: String? = navBackStackEntry.arguments?.getString("style")
 
                     style?.let {

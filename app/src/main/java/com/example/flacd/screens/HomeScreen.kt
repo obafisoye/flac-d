@@ -31,10 +31,18 @@ import com.example.flacd.R
 import com.example.flacd.api.AlbumsManager
 import com.example.flacd.api.model.Album
 
-// Screen for displaying home content
+/**
+ * Screen for displaying home content
+ * @param modifier The modifier to be applied to the layout.
+ * @param albumsManager The class for managing album data.
+ * @param navController The navigation controller for navigating between screens.
+ */
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, albumsManager: AlbumsManager, navController: NavController){
 
+    /**
+     * A font family for the text.
+     */
     val interFont = FontFamily(
         Font(R.font.inter_variable)
     )
@@ -47,6 +55,9 @@ fun HomeScreen(modifier: Modifier = Modifier, albumsManager: AlbumsManager, navC
     ){
         //Text(text = "Home Screen", color = Color.White, fontFamily = interFont)
 
+        /**
+         * Albums obtained from the AlbumsManager class.
+         */
         val albums = albumsManager.albumsResponse.value
 
         LazyColumn(
@@ -62,7 +73,11 @@ fun HomeScreen(modifier: Modifier = Modifier, albumsManager: AlbumsManager, navC
     }
 }
 
-// Album item composable
+/**
+ * A composable function that displays an album with its cover image.
+ * @param album The album object to be displayed.
+ * @param navController The navigation controller for navigating between screens.
+ */
 @Composable
 fun Album(album: Album, navController: NavController){
 
@@ -75,14 +90,6 @@ fun Album(album: Album, navController: NavController){
                 navController.navigate("albumDetail/${album.id}")
             }
     ) {
-//        Row(
-//            modifier = Modifier
-//                .background(Color.Black)
-//                .fillMaxWidth()
-//                .padding(5.dp)
-//        ) {
-//            Text(text = album.title, color = Color.White)
-//        }
         Row {
             AsyncImage(
                 modifier = Modifier
@@ -96,7 +103,5 @@ fun Album(album: Album, navController: NavController){
                 contentScale = ContentScale.FillWidth
             )
         }
-
     }
-
 }

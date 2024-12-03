@@ -24,11 +24,24 @@ import androidx.navigation.NavController
 import coil.request.Disposable
 import com.example.flacd.viewmodel.AlbumViewModel
 
+/**
+ * Screen for displaying related albums based on the selected style.
+ * @param style The selected style.
+ * @param modifier The modifier to be applied to the layout.
+ * @param viewModel The AlbumViewModel instance.
+ * @param navController The navigation controller for navigating between screens.
+ */
 @Composable
 fun RelatedAlbumsScreen(style: String, modifier: Modifier = Modifier, viewModel: AlbumViewModel, navController: NavController){
 
+    /**
+     * A scroll state for vertical scrolling.
+     */
     val scrollState = rememberScrollState()
 
+    /**
+     * A list of albums related to the selected styles gotten from the view model.
+     */
     val albums = viewModel.styleAlbums.value
 
     Box(

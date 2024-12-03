@@ -22,9 +22,10 @@ class RegisterActivity: ComponentActivity() {
             FLACdTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
-                    // app context
+                    // Application context
                     val context: Context = applicationContext
 
+                    // Register screen
                     RegisterScreen(context = context, modifier = Modifier.padding(innerPadding))
                 }
             }

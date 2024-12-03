@@ -1,7 +1,5 @@
 package com.example.flacd.viewmodel
 
-import android.view.View
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.flacd.api.model.UserProfile
@@ -11,10 +9,25 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * A ViewModel class for managing user profiles.
+ */
 class ProfileViewModel: ViewModel() {
+    /**
+     * A mutable state flow for holding the user profile.
+     */
     private val _user = MutableStateFlow<UserProfile?>(null)
+
+    /**
+     * A public state flow for accessing the user profile.
+     */
     val user: StateFlow<UserProfile?> = _user
 
+    /**
+     * Loads a user profile from the database.
+     * @param db The Firebase Firestore database instance.
+     * @param userId The ID of the user to load.
+     */
     fun loadUser(db: FirebaseFirestore, userId: String){
         viewModelScope.launch {
             val profileManager = ProfileManager(db)

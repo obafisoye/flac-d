@@ -5,10 +5,13 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-
+/**
+ * Various endpoints used in fetching data from the Discogs API
+ */
 interface AlbumServices{
-
-    // Retrieves a list of the most wanted albums based on a specific type, sorted by user demand.
+    /**
+     * Retrieves a list of the most wanted albums based on a specific type, sorted by user demand.
+     */
     @GET("search")
     fun getMostWantedAlbums(
         @Query("token") token: String,
@@ -18,7 +21,9 @@ interface AlbumServices{
         @Query("per_page") perPage: Int = 50
     ): Call<AlbumData>
 
-    // Retrieves a list of albums that match with the query
+    /**
+     * Retrieves a list of albums that match with the query
+     */
     @GET("search")
     fun searchAlbumByQuery(
         @Query("q") q: String,
@@ -28,7 +33,9 @@ interface AlbumServices{
         @Query("per_page") perPage: Int = 10,
     ): Call <AlbumData>
 
-    // Retrieves a list of most wanted albums by style
+    /**
+     * Retrieves a list of the most wanted albums based on a specific style, sorted by user demand.
+     */
     @GET("search")
     fun getAlbumsByStyle(
         @Query("token") token: String,

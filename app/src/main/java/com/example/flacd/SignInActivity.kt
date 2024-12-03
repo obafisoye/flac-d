@@ -31,7 +31,9 @@ class SignInActivity: ComponentActivity() {
             FLACdTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
-                    // keep track of splash screen state
+                    /**
+                     * A mutable state variable to keep track of the Splash Screen state
+                     */
                     var showSplashScreen by remember { mutableStateOf(true) }
 
                     AnimatedVisibility(
@@ -43,35 +45,23 @@ class SignInActivity: ComponentActivity() {
                             onTimeout = { showSplashScreen = false })
                     }
 
-                    // when splash screen start sign in logic
+                    // When Splash Screen is not visible, start sign in logic.
                     if(!showSplashScreen){
 
-                        // app context
+                        /**
+                         * Application context
+                         */
                         val context: Context = applicationContext
 
-                        // shared preferences
-                        val sharedPref =
-                            context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-                        Log.d(
-                            "sharedpref",
-                            "${
-                                sharedPref.getString(
-                                    "email",
-                                    ""
-                                )
-                            }, ${
-                                sharedPref.getString(
-                                    "password",
-                                    ""
-                                )
-                            }, ${sharedPref.getBoolean("isLoggedIn", false)}"
-                        )
+                        /**
+                         * Shared preferences to track login status
+                         */
+                        val sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+                        val loggedIn = sharedPref.getBoolean("isLoggedIn", false)
 
-                        var loggedIn = sharedPref.getBoolean("isLoggedIn", false)
-
-                        // if user is logged in direct to main activity, if user is not logged in direct to sign in screen
+                        // If user is logged in direct to Main Activity, if user is not logged in direct to Sign In screen
                         if (loggedIn) {
-                            var intent = Intent(context, MainActivity::class.java)
+                            val intent = Intent(context, MainActivity::class.java)
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             context.startActivity(intent)
                         } else {

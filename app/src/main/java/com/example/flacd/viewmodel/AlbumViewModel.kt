@@ -12,14 +12,36 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/**
+ * Album View Model
+ */
 class AlbumViewModel: ViewModel(){
+
+    /**
+     * The Discogs API token used for authentication.
+     */
     private val token = "yKOQpAcVvaYUwqOcJyUYlMVIpdlTjEJIbEQKzrEu"
+
+    /**
+     * A mutable state list for holding albums returned from the search API call.
+     */
     val albums = mutableStateOf<List<Album>>(emptyList())
+
+    /**
+     * A mutable list for holding albums returned from the filtered by style API call.
+     */
     val styleAlbums = mutableStateOf<List<Album>>(emptyList())
 
+    /**
+     * A mutable state holding the current search term entered by the user
+     */
     var searchTerm = mutableStateOf("")
 
-    // returns a list of searched albums
+    /**
+     * Searches for albums based on the given query and stores them in Firestore.
+     * @param query The search query entered by the user.
+     * @param db The Firebase Firestore database instance.
+     */
     fun searchAlbum(query: String, db: FirebaseFirestore){
 
         // if query is not blank then make api call
@@ -31,7 +53,7 @@ class AlbumViewModel: ViewModel(){
 
                 override fun onResponse(call: Call<AlbumData>, response: Response<AlbumData>) {
                     if(response.isSuccessful){
-                        //Log.i("Search", "${albums.value}")
+                        // Update albums list and save to firestore
                         albums.value = response.body()?.results?: emptyList()
 
                         val albumsManager = AlbumsManager(db)
@@ -46,26 +68,33 @@ class AlbumViewModel: ViewModel(){
             })
         }
         else{
+            // Clear albums list if query is empty
             albums.value = emptyList()
         }
     }
 
-    // saves search query for use on search screen
+    /**
+     * Saves the search term entered by the user for use in the search screen.
+     * @param term The search term entered by the user.
+     */
     fun saveSearchTerm(term: String){
         searchTerm.value = term
     }
 
-    // returns a list of albums by style
+    /**
+     * Searches for albums based on the given style and stores them in Firestore.
+     * @param style The style of albums to search for.
+     * @param db The Firebase Firestore database instance.
+     */
     fun getAlbumsByStyle(style:String, db: FirebaseFirestore){
 
         if(style.isNotBlank()){
-
             val service = Api.retrofitService.getAlbumsByStyle(style = style, token = token)
             service.enqueue(object: Callback<AlbumData>{
                 override fun onResponse(call: Call<AlbumData>, response: Response<AlbumData>) {
                     if(response.isSuccessful){
+                        // Update the styleAlbums list and save to firestore
                         styleAlbums.value = response.body()?.results?: emptyList()
-//                        Log.d("Search by style", "${styleAlbums.value}")
 
                         val albumsManager = AlbumsManager(db)
                         albumsManager.saveAlbumsToFirebase(styleAlbums.value, db)
@@ -75,10 +104,10 @@ class AlbumViewModel: ViewModel(){
                 override fun onFailure(call: Call<AlbumData>, t: Throwable) {
                     Log.e("SearchError", "${t.message}")
                 }
-
             })
         }
         else{
+            // Clear the styleAlbums list if style is empty
             styleAlbums.value = emptyList()
         }
     }

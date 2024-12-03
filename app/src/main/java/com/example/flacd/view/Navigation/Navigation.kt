@@ -13,21 +13,40 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.flacd.R
 import com.example.flacd.destinations.Destination
 
-// Bottom navigation bar composable
+/**
+ * Bottom navigation bar composable
+ * @param navController The navigation host controller
+ */
 @Composable
 fun BottomNav(navController: NavHostController) {
     NavigationBar(
         modifier = androidx.compose.ui.Modifier.height(75.dp),
         containerColor = androidx.compose.ui.graphics.Color.DarkGray,
     ) {
+        /**
+         * Current destination
+         */
         val navBackStackEntry = navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry.value?.destination
 
+        /**
+         * Icon for the navigation bar
+         */
         val ic_home = painterResource(id = R.drawable.ic_home)
+
+        /**
+         * Icon for the navigation bar
+         */
         val ic_search = painterResource(id = R.drawable.ic_search)
+
+        /**
+         * Icon for the navigation bar
+         */
         val ic_profile = painterResource(id = R.drawable.ic_profile)
 
-        // Home Navigation Item
+        /**
+         * Navigation item for the home screen
+         */
         NavigationBarItem(
             selected = currentDestination?.route == "home",
             onClick = { navController.navigate(Destination.Home.route){
@@ -37,7 +56,9 @@ fun BottomNav(navController: NavHostController) {
             icon = { Icon(painter = ic_home, contentDescription = "Home Screen Button", tint = Color.Black) }
         )
 
-        // Search Navigation Item
+        /**
+         * Navigation item for the search screen
+         */
         NavigationBarItem(
             selected = currentDestination?.route == "search",
             onClick = { navController.navigate(Destination.Search.route){
@@ -47,7 +68,9 @@ fun BottomNav(navController: NavHostController) {
             icon = { Icon(painter = ic_search, contentDescription = "Search Screen Button", tint = Color.Black) }
         )
 
-        // Profile Navigation Item
+        /**
+         * Navigation item for the profile screen
+         */
         NavigationBarItem(
             selected = currentDestination?.route == "profile",
             onClick = { navController.navigate(Destination.Profile.route){
