@@ -3,6 +3,7 @@ package com.example.flacd.screens
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.widget.EditText
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.example.flacd.MainActivity
 import com.example.flacd.RegisterActivity
 import com.google.firebase.auth.FirebaseAuth
+import android.app.AlertDialog
 
 /**
  * Screen for signing in users.
@@ -40,6 +43,11 @@ import com.google.firebase.auth.FirebaseAuth
  */
 @Composable
 fun SignInScreen(context: Context, modifier: Modifier = Modifier) {
+
+    /**
+     * A Firebase Authentication instance.
+     */
+    val auth = FirebaseAuth.getInstance()
 
     /**
      * The email of the user.
@@ -55,6 +63,11 @@ fun SignInScreen(context: Context, modifier: Modifier = Modifier) {
      * A keyboard controller for hiding the keyboard.
      */
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    /**
+     * The activity context.
+     */
+    val activityContext = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -90,16 +103,34 @@ fun SignInScreen(context: Context, modifier: Modifier = Modifier) {
             )
 
             Button(
-                onClick = { performSignIn(email, password, context, keyboardController) },
+                onClick = {
+                    if(email.isEmpty() || password.isEmpty()){
+                        Toast.makeText(context, "Email and password are required", Toast.LENGTH_SHORT).show()
+                    }else{
+                        performSignIn(auth, email, password, context, keyboardController)
+                    } },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Gray,
                     contentColor = Color.White
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(5.dp)
             ) {
                 Text("Sign In")
+            }
+
+            Button(
+                onClick = { sendResetPasswordEmail(auth, activityContext) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Gray,
+                    contentColor = Color.White
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp)
+            ) {
+                Text("Forgotten?")
             }
 
             Row(
@@ -136,13 +167,7 @@ fun SignInScreen(context: Context, modifier: Modifier = Modifier) {
  * @param context The application context.
  * @param keyboardController A keyboard controller for hiding the keyboard.
  */
-fun performSignIn(email: String, password: String, context: Context, keyboardController: SoftwareKeyboardController?){
-
-    /**
-     * A Firebase Authentication instance.
-     */
-    val auth = FirebaseAuth.getInstance()
-
+fun performSignIn(auth: FirebaseAuth, email: String, password: String, context: Context, keyboardController: SoftwareKeyboardController?){
     auth.signInWithEmailAndPassword(email, password)
         .addOnCompleteListener{ task ->
             if (task.isSuccessful) {
@@ -172,4 +197,51 @@ fun performSignIn(email: String, password: String, context: Context, keyboardCon
             }
             keyboardController?.hide()
         }
+}
+
+/**
+ * Sends a password reset email to the user.
+ * @param auth The Firebase Authentication instance.
+ * @param activityContext The activity context.
+ */
+fun sendResetPasswordEmail(auth: FirebaseAuth, activityContext: Context){
+    promptEmail(activityContext){ email ->
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if(task.isSuccessful){
+                    Toast.makeText(activityContext, "Password reset email sent", Toast.LENGTH_SHORT).show()
+                }else{
+                    val errorMessage = task.exception?.message ?: "Failed to send password reset email"
+                    Toast.makeText(activityContext, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+}
+
+/**
+ * Prompts the user for an email to reset their password.
+ * @param context The application context.
+ * @param callback A callback function to be executed with the entered email.
+ */
+private fun promptEmail(context: Context, callback: (String) -> Unit){
+    val inputField = EditText(context)
+    inputField.hint = "Enter your email"
+    inputField.inputType = android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+
+    AlertDialog.Builder(context)
+        .setTitle("Reset Password")
+        .setMessage("Please enter your email to reset your password")
+        .setView(inputField)
+        .setPositiveButton("Confirm") { _, _ ->
+            val email = inputField.text.toString()
+
+            if(email.isNotEmpty()){
+                callback(email)
+            }else{
+                Toast.makeText(context, "Email is required", Toast.LENGTH_SHORT).show()
+            }
+        }
+        .setNegativeButton("Cancel", null)
+        .show()
 }

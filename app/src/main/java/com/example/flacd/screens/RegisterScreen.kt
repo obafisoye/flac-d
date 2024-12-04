@@ -119,7 +119,21 @@ fun RegisterScreen(context: Context, modifier: Modifier = Modifier){
 
             Button(
                 onClick = {
-                    registerUser(username, email, password, context, keyboardController, auth, firestore)
+                    // Check if text fields are empty
+                    if(username.isEmpty()){
+                        Toast.makeText(context, "Username is required.", Toast.LENGTH_SHORT).show()
+                    }
+                    else if(email.isEmpty()){
+                        Toast.makeText(context, "Email is required.", Toast.LENGTH_SHORT).show()
+                    }
+                    else if(password.isEmpty()){
+                        Toast.makeText(context, "Password is required.", Toast.LENGTH_SHORT).show()
+                    }
+                    else {
+                        registerUser(username, email, password, context,
+                            keyboardController, auth, firestore
+                        )
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Gray,
