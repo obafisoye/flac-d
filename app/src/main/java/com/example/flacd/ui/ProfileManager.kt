@@ -20,6 +20,7 @@ class ProfileManager(private val db: FirebaseFirestore){
     /**
      * Gets a user profile from the Firebase Firestore database.
      * @param userId The ID of the user to retrieve.
+     * @return The user profile if found, otherwise null.
      * @throws Exception if there is an error getting the user profile.
      */
     suspend fun getUser(userId: String): UserProfile? {

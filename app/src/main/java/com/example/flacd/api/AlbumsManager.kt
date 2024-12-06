@@ -155,6 +155,7 @@ class AlbumsManager(private val db: FirebaseFirestore) {
      * Retrieves a single album from the Firebase Firestore database by its ID.
      * @param db The Firebase Firestore database instance.
      * @param albumId The ID of the album to retrieve.
+     * @return The album if found, else null.
      * @throws Exception if an error occurs while retrieving the album.
      */
     suspend fun getAlbumById(db: FirebaseFirestore, albumId: String): Album? {

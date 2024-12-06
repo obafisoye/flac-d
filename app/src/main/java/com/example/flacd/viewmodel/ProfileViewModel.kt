@@ -30,6 +30,7 @@ class ProfileViewModel: ViewModel() {
      */
     fun loadUser(db: FirebaseFirestore, userId: String){
         viewModelScope.launch {
+            // Fetch user then update view model with fetched user
             val profileManager = ProfileManager(db)
             val fetchedUser = profileManager.getUser(userId)
             _user.value = fetchedUser

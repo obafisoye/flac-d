@@ -11,6 +11,7 @@ import retrofit2.http.Query
 interface AlbumServices{
     /**
      * Retrieves a list of the most wanted albums based on a specific type, sorted by user demand.
+     * @return A call object used to execute the network request, which will return an AlbumData object.
      */
     @GET("search")
     fun getMostWantedAlbums(
@@ -23,6 +24,7 @@ interface AlbumServices{
 
     /**
      * Retrieves a list of albums that match with the query
+     * @return A call object used to execute the network request, which will return an AlbumData object.
      */
     @GET("search")
     fun searchAlbumByQuery(
@@ -35,6 +37,7 @@ interface AlbumServices{
 
     /**
      * Retrieves a list of the most wanted albums based on a specific style, sorted by user demand.
+     * @return A call object used to execute the network request, which will return an AlbumData object.
      */
     @GET("search")
     fun getAlbumsByStyle(
